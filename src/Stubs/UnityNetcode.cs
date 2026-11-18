@@ -26,27 +26,6 @@ namespace Unity.Netcode
         public NetworkBehaviour[] NetworkBehaviours => Array.Empty<NetworkBehaviour>();
     }
 
-    public class NetworkVariable<T> where T : struct
-    {
-        public NetworkVariable() { }
-        public NetworkVariable(T value) { Value = value; }
-        public T Value { get; set; }
-        public event Action<T, T> OnValueChanged;
-        public void Set(T value) { Value = value; }
-        public bool IsDirty => false;
-        public static implicit operator T(NetworkVariable<T> variable) => variable.Value;
-    }
-
-    public class NetworkVariable<T> where T : class
-    {
-        public NetworkVariable() { }
-        public NetworkVariable(T value) { Value = value; }
-        public T Value { get; set; }
-        public event Action<T, T> OnValueChanged;
-        public void Set(T value) { Value = value; }
-        public bool IsDirty => false;
-    }
-
     public class NetworkList<T> where T : struct
     {
         public int Count => 0;
@@ -116,9 +95,9 @@ namespace Unity.Netcode
         public ulong SenderClientId => 0;
     }
 
-    public static class NetworkManager
+    public class NetworkManager
     {
-        public static NetworkManager Singleton => new NetworkManager();
+        public static NetworkManager Singleton { get; } = new NetworkManager();
         public bool IsServer => true;
         public bool IsClient => true;
         public bool IsHost => true;

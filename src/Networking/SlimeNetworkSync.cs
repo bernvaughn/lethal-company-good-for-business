@@ -2,8 +2,8 @@ using GoodForBusiness.Core;
 using GoodForBusiness.Egg;
 using GoodForBusiness.Slimes;
 using GoodForBusiness.Stubs.Game;
+using LethalLib.Modules;
 using UnityEngine;
-using Unity.Netcode;
 
 namespace GoodForBusiness.Networking
 {
@@ -61,7 +61,7 @@ namespace GoodForBusiness.Networking
     {
         private NetworkTransform? _networkTransform;
 
-        public override void Awake()
+        protected override void Awake()
         {
             base.Awake();
             _networkTransform = GetComponent<NetworkTransform>();
@@ -71,7 +71,6 @@ namespace GoodForBusiness.Networking
             }
             ConfigureNetworkTransform();
         }
-
         private void ConfigureNetworkTransform()
         {
             if (_networkTransform == null) return;
@@ -80,7 +79,7 @@ namespace GoodForBusiness.Networking
             _networkTransform.Interpolate = true;
             _networkTransform.TeleportThreshold = 5f;
             _networkTransform.SynchronizeRotation = true;
-            _networkTransform.ScaleSynchronization = NetworkTransform.ScaleSynchronizationMode.None;
+            _networkTransform.ScaleSynchronization = ScaleSynchronizationMode.None;
         }
 
         /// <summary>
@@ -110,7 +109,7 @@ namespace GoodForBusiness.Networking
         {
             if (!IsServer) return;
 
-            var networkObj = NetworkManager.Singleton?.SpawnManager?.GetNetworkObject(networkObjectId);
+            var networkObj = NetworkManager.Singleton?.GetNetworkObject(networkObjectId);
             if (networkObj == null) return;
 
             var slimeAI = networkObj.GetComponent<SlimeAI>();
@@ -145,7 +144,7 @@ namespace GoodForBusiness.Networking
         [ClientRpc]
         public void FeedSlimeClientRpc(ulong networkObjectId, int scrapValue, int playerId)
         {
-            var networkObj = NetworkManager.Singleton?.SpawnManager?.GetNetworkObject(networkObjectId);
+            var networkObj = NetworkManager.Singleton?.GetNetworkObject(networkObjectId);
             if (networkObj == null) return;
 
             var slimeAI = networkObj.GetComponent<SlimeAI>();
@@ -230,7 +229,7 @@ namespace GoodForBusiness.Networking
         {
             if (!IsServer) return;
 
-            var networkObj = NetworkManager.Singleton?.SpawnManager?.GetNetworkObject(networkObjectId);
+            var networkObj = NetworkManager.Singleton?.GetNetworkObject(networkObjectId);
             if (networkObj == null) return;
 
             var slimeAI = networkObj.GetComponent<SlimeAI>();
@@ -248,7 +247,7 @@ namespace GoodForBusiness.Networking
         [ClientRpc]
         public void TriggerAbilityClientRpc(ulong networkObjectId)
         {
-            var networkObj = NetworkManager.Singleton?.SpawnManager?.GetNetworkObject(networkObjectId);
+            var networkObj = NetworkManager.Singleton?.GetNetworkObject(networkObjectId);
             if (networkObj == null) return;
 
             var slimeAI = networkObj.GetComponent<SlimeAI>();
@@ -324,7 +323,7 @@ namespace GoodForBusiness.Networking
         [ClientRpc]
         public void SyncGrowthProgressClientRpc(ulong networkObjectId, float progress, bool isGrown)
         {
-            var networkObj = NetworkManager.Singleton?.SpawnManager?.GetNetworkObject(networkObjectId);
+            var networkObj = NetworkManager.Singleton?.GetNetworkObject(networkObjectId);
             if (networkObj == null) return;
 
             var slimeAI = networkObj.GetComponent<SlimeAI>();
@@ -347,7 +346,7 @@ namespace GoodForBusiness.Networking
         [ClientRpc]
         public void SyncStateClientRpc(ulong networkObjectId, int state)
         {
-            var networkObj = NetworkManager.Singleton?.SpawnManager?.GetNetworkObject(networkObjectId);
+            var networkObj = NetworkManager.Singleton?.GetNetworkObject(networkObjectId);
             if (networkObj == null) return;
 
             var slimeAI = networkObj.GetComponent<SlimeAI>();

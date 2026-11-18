@@ -14,7 +14,7 @@ namespace GoodForBusiness.Core
 
         private readonly List<SlimeAI> _activeSlimes = new List<SlimeAI>();
         private SlimeSaveData[]? _pendingSaveData;
-        private readonly string _saveFilePath;
+        private string _saveFilePath;
 
         public IReadOnlyList<SlimeAI> ActiveSlimes => _activeSlimes;
 
@@ -35,7 +35,7 @@ namespace GoodForBusiness.Core
             LoadFromDisk();
         }
 
-        private new void OnDestroy()
+        public new void OnDestroy()
         {
             if (Instance == this)
                 Instance = null!;

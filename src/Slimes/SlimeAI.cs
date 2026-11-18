@@ -41,7 +41,7 @@ namespace GoodForBusiness.Slimes
         public SlimeState CurrentState
         {
             get => (SlimeState)SyncState.Value;
-            private set => SyncState.Value = (int)value;
+            internal set => SyncState.Value = (int)value;
         }
 
         public float GrowthProgress
@@ -64,7 +64,7 @@ namespace GoodForBusiness.Slimes
 
         public ISlimeVariant? Variant => _variant;
 
-        public ulong NetworkObjectId => NetworkObject?.NetworkObjectId ?? 0;
+        public ulong NetworkObjectId { get; set; }
 
         [Header("References")]
         [SerializeField] private NavMeshAgent _agent;
@@ -123,7 +123,7 @@ namespace GoodForBusiness.Slimes
             if (_agent == null)
                 _agent = gameObject.AddComponent<NavMeshAgent>();
 
-            _animator = GetComponentInChildren<Animator>();
+            _animator = GetComponent<Animator>();
             if (_animator == null)
                 _animator = GetComponentInChildren<Animator>(true);
 
@@ -166,7 +166,7 @@ namespace GoodForBusiness.Slimes
                 _itemSpawnSync = gameObject.AddComponent<SlimeItemSpawnSync>();
         }
 
-        private void InitializeVariant()
+        public void InitializeVariant()
         {
             _config = GoodForBusinessPlugin.Instance?.Config;
 
@@ -478,7 +478,7 @@ namespace GoodForBusiness.Slimes
             }
         }
 
-        private void PlayEatEffects()
+        internal void PlayEatEffects()
         {
             if (_eatClip != null)
             {
@@ -496,7 +496,7 @@ namespace GoodForBusiness.Slimes
             TriggerAnimationClientRpc("Grow");
         }
 
-        private void PlayAbilityEffects()
+        internal void PlayAbilityEffects()
         {
             if (_abilityClip != null)
             {
@@ -539,7 +539,7 @@ namespace GoodForBusiness.Slimes
         }
 
         [ClientRpc]
-        private void TriggerAnimationClientRpc(string trigger)
+        internal void TriggerAnimationClientRpc(string trigger)
         {
             if (_animator != null)
             {
@@ -559,13 +559,12 @@ namespace GoodForBusiness.Slimes
             _itemSpawnSync?.SpawnItemServerRpc(itemName, position, Quaternion.identity, creditValue);
         }
 
-        public override void OnDestroy()
+        protected override void OnDestroy()
         {
             base.OnDestroy();
             if (_stateCoroutine != null)
                 StopCoroutine(_stateCoroutine);
             if (_bobCoroutine != null)
                 StopCoroutine(_bobCoroutine);
-        }
-    }
+        }    }
 }

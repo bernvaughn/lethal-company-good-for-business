@@ -14,7 +14,7 @@ namespace UnityEngine
         public T AddComponent<T>() where T : Component => default!;
         public static void Destroy(Object? obj) { }
         public static void Destroy(Object? obj, float t) { }
-        public static Object? FindObjectOfType<T>() where T : Object => null;
+        public static T? FindObjectOfType<T>() where T : Object => null;
         public static T[] FindObjectsOfType<T>() where T : Object => Array.Empty<T>();
         public static void DontDestroyOnLoad(Object? obj) { }
         public static T Instantiate<T>(T original) where T : Object => default!;
@@ -34,6 +34,7 @@ namespace UnityEngine
         public static float Clamp01(float value) => value < 0 ? 0 : (value > 1 ? 1 : value);
         public static float Max(float a, float b) => a > b ? a : b;
         public static float Min(float a, float b) => a < b ? a : b;
+        public static float Sin(float value) => 0f;
     }
 
     public static class Random
@@ -41,18 +42,46 @@ namespace UnityEngine
         public static float value => 0.5f;
         public static float Range(float min, float max) => min;
         public static int Range(int min, int max) => min;
+        public static Vector3 insideUnitSphere => Vector3.zero;
+        public static Color color => Color.white;
+        public static float rotation => 0f;
+    }
+
+    public class WaitForSeconds
+    {
+        public WaitForSeconds(float seconds) { }
     }
 
     public class Component : Object
     {
         public Transform transform => default!;
         public GameObject gameObject => default!;
+        public T GetComponent<T>() where T : Component => default!;
         public T GetComponentInChildren<T>() where T : Component => default!;
+        public T GetComponentInChildren<T>(bool includeInactive) where T : Component => default!;
+        public T[] GetComponentsInChildren<T>(bool includeInactive) where T : Component => Array.Empty<T>();
+        public T[] GetComponents<T>() where T : Component => Array.Empty<T>();
+        public T GetComponentInParent<T>() where T : Component => default!;
     }
 
     public class Renderer : Component
     {
         public Material material => default!;
+        public Material sharedMaterial { get => default!; set { } }
+        public void GetPropertyBlock(MaterialPropertyBlock block) { }
+        public void SetPropertyBlock(MaterialPropertyBlock block) { }
+    }
+
+    public class MaterialPropertyBlock
+    {
+        public void SetColor(int nameID, Color color) { }
+        public void SetFloat(int nameID, float value) { }
+    }
+
+    public static class Shader
+    {
+        public static int PropertyToID(string name) => 0;
+        public static Material? Find(string name) => null;
     }
 
     public class GameObject : Object
@@ -65,6 +94,7 @@ namespace UnityEngine
         public static GameObject CreatePrimitive(PrimitiveType type) => new GameObject();
         public new T GetComponent<T>() where T : Component => default!;
         public new T AddComponent<T>() where T : Component => default!;
+        public new T[] GetComponentsInChildren<T>(bool includeInactive) where T : Component => Array.Empty<T>();
         public void SetActive(bool active) { }
     }
 
@@ -76,6 +106,12 @@ namespace UnityEngine
         public Quaternion localRotation { get; set; }
         public Vector3 localScale { get; set; }
         public Transform? parent { get; set; }
+        public Vector3 forward => Vector3.forward;
+        public void SetPositionAndRotation(Vector3 position, Quaternion rotation)
+        {
+            this.position = position;
+            this.rotation = rotation;
+        }
     }
 
     public struct Vector3
@@ -85,6 +121,11 @@ namespace UnityEngine
         public static Vector3 zero => new Vector3(0, 0, 0);
         public static Vector3 one => new Vector3(1, 1, 1);
         public static float Distance(Vector3 a, Vector3 b) => new Vector3(a.x - b.x, a.y - b.y, a.z - b.z).magnitude;
+        public static float SqrMagnitude(Vector3 a) => (a.x - 0) * (a.x - 0) + (a.y - 0) * (a.y - 0) + (a.z - 0) * (a.z - 0);
+        public float SqrMagnitude() => x * x + y * y + z * z;
+        public float Magnitude => (float)System.Math.Sqrt(x * x + y * y + z * z);
+        public static Vector3 forward => new Vector3(0, 0, 1);
+        public static Vector3 up => new Vector3(0, 1, 0);
         public static Vector3 operator +(Vector3 a, Vector3 b) => new Vector3(a.x + b.x, a.y + b.y, a.z + b.z);
         public static Vector3 operator -(Vector3 a, Vector3 b) => new Vector3(a.x - b.x, a.y - b.y, a.z - b.z);
         public static Vector3 operator *(Vector3 a, float d) => new Vector3(a.x * d, a.y * d, a.z * d);
@@ -104,6 +145,7 @@ namespace UnityEngine
         public static Quaternion operator *(Quaternion a, Quaternion b) => a;
         public static Vector3 operator *(Quaternion rotation, Vector3 point) => point;
         public static Quaternion LookRotation(Vector3 forward) => identity;
+        public static Quaternion Slerp(Quaternion a, Quaternion b, float t) => a;
         public override string ToString() => $"({x}, {y}, {z}, {w})";
     }
 
@@ -137,8 +179,8 @@ namespace UnityEngine
         public Material() { }
         public Material(Material? source) { }
         public Color color { get; set; } = Color.white;
-        public void SetColor(string? propertyName, Color color) { }
-        public void SetFloat(string? propertyName, float value) { }
+        public void SetColor(int nameID, Color color) { }
+        public void SetFloat(int nameID, float value) { }
     }
 
     public class Sprite : Object { }
@@ -158,6 +200,29 @@ namespace UnityEngine
     }
 
     public class AudioClip : Object { }
+
+    public class AudioSource : Component
+    {
+        public AudioClip? clip;
+        public void Play() { }
+        public void PlayOneShot(AudioClip? clip) { }
+    }
+
+    public class NetworkTransform : Component
+    {
+        public bool Interpolate { get; set; } = true;
+        public float TeleportThreshold { get; set; } = 5f;
+        public bool SynchronizeRotation { get; set; } = true;
+        public ScaleSynchronizationMode ScaleSynchronization { get; set; }
+        public void Teleport(Vector3 position, Quaternion rotation) { }
+    }
+
+    public enum ScaleSynchronizationMode
+    {
+        None,
+        LocalScale,
+        UniformScale
+    }
 
     public class Animator : Component
     {
@@ -197,10 +262,86 @@ namespace UnityEngine
     {
         protected virtual void Awake() { }
         protected virtual void Start() { }
-        protected virtual void Update() { }
+        public virtual void Update() { }
         protected virtual void FixedUpdate() { }
         protected virtual void OnDestroy() { }
         protected virtual void OnEnable() { }
         protected virtual void OnDisable() { }
+        public virtual Coroutine StartCoroutine(System.Collections.IEnumerator routine) => null!;
+        public virtual void StopCoroutine(Coroutine? routine) { }
+    }
+
+    public class Coroutine { }
+
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = false)]
+    public sealed class HeaderAttribute : Attribute
+    {
+        public string header;
+        public HeaderAttribute(string header) { this.header = header; }
+    }
+
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = false)]
+    public sealed class SerializeFieldAttribute : Attribute { }
+
+    public static class Physics
+    {
+        public static bool Raycast(Vector3 origin, Vector3 direction, out RaycastHit hit, float maxDistance)
+        {
+            hit = default;
+            return false;
+        }
+    }
+
+    public struct RaycastHit
+    {
+        public Collider collider;
+        public Vector3 point;
+        public Vector3 normal;
+    }
+
+    public static class Input
+    {
+        public static bool GetKeyDown(KeyCode key) => false;
+    }
+
+    public enum KeyCode
+    {
+        E,
+        None
+    }
+
+    public static class Time
+    {
+        public static float time => 0f;
+        public static float deltaTime => 0f;
+    }
+
+    namespace AI
+    {
+        public class NavMeshAgent : Component
+        {
+            public float speed { get; set; } = 2f;
+            public float acceleration { get; set; } = 8f;
+            public float stoppingDistance { get; set; } = 0f;
+            public bool autoBraking { get; set; } = true;
+            public bool hasPath => false;
+            public bool pathPending => false;
+            public Vector3 destination { get; set; } = Vector3.zero;
+            public Vector3 velocity => Vector3.zero;
+            public void ResetPath() { }
+            public void SetDestination(Vector3 position) { }
+            public bool SamplePosition(Vector3 position, out NavMeshHit hit, float maxDistance, int areaMask) { hit = default; return false; }
+        }
+
+        public struct NavMeshHit
+        {
+            public Vector3 position;
+        }
+
+        public static class NavMesh
+        {
+            public static int AllAreas => 0;
+            public static bool SamplePosition(Vector3 position, out NavMeshHit hit, float maxDistance, int areaMask) { hit = default; return false; }
+        }
     }
 }

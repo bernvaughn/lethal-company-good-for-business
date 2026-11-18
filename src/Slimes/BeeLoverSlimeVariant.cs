@@ -59,7 +59,7 @@ namespace GoodForBusiness.Slimes
             float nearestDist = range * range;
 
             // Find all beehive enemies in the scene
-            var allEnemies = UnityEngine.Object.FindObjectsByType<EnemyAI>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+            var allEnemies = UnityEngine.Object.FindObjectsOfType<EnemyAI>();
             foreach (var enemy in allEnemies)
             {
                 if (enemy == null || enemy.enemyType == null)

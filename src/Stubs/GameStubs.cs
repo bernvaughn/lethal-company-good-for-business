@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.AI;
 using System;
 using System.Collections.Generic;
 
@@ -33,6 +34,7 @@ namespace GoodForBusiness.Stubs.Game
         public bool IsClient { get; set; } = true;
         public bool IsHost { get; set; } = true;
         public bool IsOwner { get; set; } = true;
+        public bool IsSpawned { get; set; } = true;
         public NetworkObject? NetworkObject { get; set; }
     }
 
@@ -75,6 +77,7 @@ namespace GoodForBusiness.Stubs.Game
         public bool IsHost = true;
         public bool IsServer = true;
         public bool IsClient = true;
+        public NetworkObject? GetNetworkObject(ulong networkObjectId) => null;
         public static NetworkObject? SpawnObject(GameObject prefab, Vector3 position, Quaternion rotation)
         {
             var obj = UnityEngine.Object.Instantiate(prefab);
@@ -122,6 +125,8 @@ namespace GoodForBusiness.Stubs.Game
         public static PlayerControllerB? localPlayerController;
         public static PlayerControllerB[]? allPlayerScripts;
         public int playerClientId;
+        public bool isPlayerDead;
+        public bool IsOwner { get; set; } = true;
         public GrabbableObject?[] ItemSlots = new GrabbableObject?[4];
         public int currentItemSlot = 0;
         public Vector3 transformPosition => transform.position;
@@ -149,6 +154,7 @@ namespace GoodForBusiness.Stubs.Game
 
     public class EnemyType : ScriptableObject
     {
+        public string enemyName = "";
         public GameObject enemyPrefab;
         public int PowerLevel;
         public int spawnWeight;

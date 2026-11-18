@@ -72,7 +72,7 @@ namespace GoodForBusiness.Patches
             if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsHost)
             {
                 // Find a SlimeHatchingSync component in the scene to use for hatching
-                var hatchingSync = FindObjectOfType<SlimeHatchingSync>();
+                var hatchingSync = UnityEngine.Object.FindObjectOfType<SlimeHatchingSync>();
                 if (hatchingSync != null)
                 {
                     hatchingSync.HatchEggServerRpc(eggItem.transform.position, (int)eggItem.EggType, ownerPlayerId);
@@ -86,7 +86,7 @@ namespace GoodForBusiness.Patches
             else
             {
                 // Client-side: request hatch from server
-                var hatchingSync = FindObjectOfType<SlimeHatchingSync>();
+                var hatchingSync = UnityEngine.Object.FindObjectOfType<SlimeHatchingSync>();
                 if (hatchingSync != null)
                 {
                     hatchingSync.HatchEggServerRpc(eggItem.transform.position, (int)eggItem.EggType, ownerPlayerId);

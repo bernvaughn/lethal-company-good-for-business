@@ -36,8 +36,11 @@ namespace GoodForBusiness.Configuration
         public ConfigEntry<bool> SlimesFacePlayers { get; }
         public ConfigEntry<float> SlimeBobAmount { get; }
 
+        public static PluginConfig? Instance { get; private set; }
+
         public PluginConfig(ConfigFile config)
         {
+            Instance = this;
             _config = config;
 
             // General
