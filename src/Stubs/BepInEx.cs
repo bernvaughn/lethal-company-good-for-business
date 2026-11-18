@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using GoodForBusiness.Stubs.Game;
 
 namespace BepInEx
 {
@@ -19,10 +21,17 @@ namespace BepInEx
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
     public class BepInDependencyAttribute : Attribute
     {
+        public enum DependencyFlags
+        {
+            HardDependency = 0,
+            SoftDependency = 1
+        }
+
         public string GUID { get; }
         public string? Version { get; }
         public BepInDependencyAttribute(string guid) { GUID = guid; }
         public BepInDependencyAttribute(string guid, string? version) { GUID = guid; Version = version; }
+        public BepInDependencyAttribute(string guid, DependencyFlags flags) { GUID = guid; }
     }
 
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
@@ -109,5 +118,46 @@ namespace BepInEx.Configuration
     public class AcceptableValueList<T> : AcceptableValueBase
     {
         public AcceptableValueList(params T[] values) { }
+    }
+}
+
+namespace LethalLib.Modules
+{
+    using System.Collections.Generic;
+
+    public class ScrapItemRegistration
+    {
+        public Item Item { get; set; } = null!;
+        public Dictionary<LevelTypes, int> Rarities { get; set; } = new();
+    }
+
+    public static class Items
+    {
+        private static readonly List<Item> _registeredItems = new();
+
+        public static void RegisterScrap(ScrapItemRegistration registration)
+        {
+            _registeredItems.Add(registration.Item);
+        }
+
+        public static Item? FindItemByName(string name)
+        {
+            return _registeredItems.Find(i => i.name == name);
+        }
+    }
+
+    public static class Enemies
+    {
+        private static readonly List<EnemyType> _registeredEnemies = new();
+
+        public static void RegisterEnemy(EnemyType enemyType)
+        {
+            _registeredEnemies.Add(enemyType);
+        }
+
+        public static EnemyType? GetEnemyType(string name)
+        {
+            return _registeredEnemies.Find(e => e.name == name);
+        }
     }
 }

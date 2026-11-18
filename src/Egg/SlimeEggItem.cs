@@ -39,15 +39,5 @@ namespace GoodForBusiness.Egg
         {
             base.OnDrop();
         }
-
-        public void Hatch(SlimeAI slimePrefab)
-        {
-            if (slimePrefab == null)
-                return;
-            var slime = UnityEngine.Object.Instantiate(slimePrefab, transform.position, Quaternion.identity) as SlimeAI;
-            if (slime != null)
-                slime.SlimeType = EggType;
-            Destroy(gameObject);
-        }
     }
 }

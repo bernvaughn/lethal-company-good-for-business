@@ -3,6 +3,7 @@ using GoodForBusiness.Core;
 using GoodForBusiness.Egg;
 using GoodForBusiness.Items;
 using GoodForBusiness.Slimes;
+using GoodForBusiness.Stubs.Game;
 using LethalLib.Modules;
 using UnityEngine;
 
@@ -94,7 +95,7 @@ namespace GoodForBusiness.Core
                 }
             };
 
-            Items.RegisterScrap(scrapRegistration);
+            LethalLib.Modules.Items.RegisterScrap(scrapRegistration);
             UnityEngine.Debug.Log("[GoodForBusiness] Registered Slime Egg as custom scrap.");
         }
 
@@ -150,7 +151,7 @@ namespace GoodForBusiness.Core
                 }
             };
 
-            Items.RegisterScrap(scrapRegistration);
+            LethalLib.Modules.Items.RegisterScrap(scrapRegistration);
             UnityEngine.Debug.Log("[GoodForBusiness] Registered Slimed Beehive as custom scrap.");
         }
 
@@ -204,7 +205,7 @@ namespace GoodForBusiness.Core
                 }
             };
 
-            Items.RegisterScrap(scrapRegistration);
+            LethalLib.Modules.Items.RegisterScrap(scrapRegistration);
             UnityEngine.Debug.Log("[GoodForBusiness] Registered Equipment Crate as custom scrap.");
         }
 
@@ -244,7 +245,7 @@ namespace GoodForBusiness.Core
             slimeEnemyType.PowerLevel = 0; // Passive
             slimeEnemyType.spawnWeight = 0; // Not naturally spawned - handled by SlimeManager
 
-            Enemies.RegisterEnemy(slimeEnemyType);
+            LethalLib.Modules.Enemies.RegisterEnemy(slimeEnemyType);
             UnityEngine.Debug.Log("[GoodForBusiness] Registered Slime as custom enemy.");
         }
     }

@@ -48,8 +48,10 @@ namespace GoodForBusiness.Stubs.Game
         public NetworkVariable(T value) { Value = value; }
     }
 
-    public static class NetworkManager
+    public class NetworkManager
     {
+        public static NetworkManager? Singleton { get; private set; } = new NetworkManager();
+        public bool IsHost = true;
         public static NetworkObject? SpawnObject(GameObject prefab, Vector3 position, Quaternion rotation)
         {
             var obj = UnityEngine.Object.Instantiate(prefab);
@@ -64,17 +66,28 @@ namespace GoodForBusiness.Stubs.Game
         public void SpawnScrapInLevel() { OnSpawnScrap?.Invoke(); }
     }
 
+    public class ShipBuildModeManager : UnityEngine.MonoBehaviour
+    {
+        public static ShipBuildModeManager Instance { get; private set; } = null!;
+        public GrabbableObject?[] shipStorage = new GrabbableObject?[16];
+    }
+
     public class StartOfRound : UnityEngine.MonoBehaviour
     {
         public static StartOfRound Instance { get; private set; } = null!;
         public event Action? OnNewDay;
+        public PlayerControllerB[]? allPlayerScripts;
+        public ShipBuildModeManager? shipBuildModeManager;
         public void QuotaReset() { OnNewDay?.Invoke(); }
     }
 
     public class PlayerControllerB : UnityEngine.MonoBehaviour
     {
         public static PlayerControllerB? localPlayerController;
+        public static PlayerControllerB[]? allPlayerScripts;
         public int playerClientId;
+        public GrabbableObject?[] ItemSlots = new GrabbableObject?[4];
+        public int currentItemSlot = 0;
         public Vector3 transformPosition => transform.position;
     }
 

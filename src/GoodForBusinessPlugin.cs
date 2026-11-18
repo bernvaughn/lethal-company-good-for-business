@@ -13,7 +13,7 @@ using LethalLib.Modules;
 namespace GoodForBusiness
 {
     [BepInPlugin(PluginInfo.GUID, PluginInfo.Name, PluginInfo.Version)]
-    [BepInDependency("Evaisa.LethalLib", BepInDependency.DependencyFlags.HardDependency)]
+    [BepInDependency("Evaisa.LethalLib")]
     [BepInProcess("Lethal Company.exe")]
     public class GoodForBusinessPlugin : BaseUnityPlugin
     {
@@ -33,7 +33,7 @@ namespace GoodForBusiness
             Logger.LogInfo($"{PluginInfo.Name} v{PluginInfo.Version} loaded.");
 
             // Initialize configuration
-            Config = new PluginConfig(Config);
+            Config = new PluginConfig(base.Config);
 
             // Load asset bundle
             LoadAssetBundle();
