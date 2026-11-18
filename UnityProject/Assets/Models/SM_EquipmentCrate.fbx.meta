@@ -1,0 +1,72 @@
+fileFormatVersion: 2
+guid: 2f8e1a2b3c4d5e6f7a8b9c0d1e2f3a4d
+ModelImporter:
+  serializedVersion: 29
+  importBlendShapes: 1
+  importVisibility: 1
+  importCameras: 0
+  importLights: 0
+  preserveHierarchy: 0
+  meshCompression: 0
+  isReadable: 0
+  optimizeMesh: 1
+  importNormals: 1
+  importNormalsMode: 0
+  normalSmoothingAngle: 60
+  importTangents: 1
+  swapUVChannels: 0
+  generateSecondaryUV: 0
+  primaryUVValue: 0
+  secondaryUVValue: 0
+  uvChannel: 0
+  importMaterials: 1
+  materialName: 0
+  materialSearch: 1
+  materialLocation: 0
+  keepMaterialOrder: 0
+  materialImportMode: 0
+  animationType: 0
+  animationCompression: 1
+  animationWrapMode: 0
+  importConstraints: 0
+  humanDescription: {fileID: 0}
+  avatarSetup: 0
+  bakedIK: 0
+  bakeIKCycles: 0
+  motionRetarget: 0
+  motionNodeNames: []
+  rootMotionBoneName: 
+  rootTransformRotation: 0
+  rootTransformPositionY: 0
+  rootTransformPositionXZ: 0
+  sourceAvatar: {fileID: 0}
+  genericRigSetup: 0
+  optimizeGameObjects: 1
+  animationUtility: {fileID: 0}
+  secondaryUVHardAngle: 88
+  secondaryUVPackMargin: 4
+  secondaryUVAngleDistortion: 8
+  secondaryUVAreaDistortion: 15
+  useFileScale: 1
+  fileScale: 1
+  globalScale: 1
+  meshOptimizationFlags: 4351
+  animationClipSettings: {}
+  importBlendShapeNormals: 1
+  importBlendShapeTangents: 1
+  optimizeMeshPolygons: 1
+  optimizeMeshVertices: 1
+  importUvChannels: 1
+  ignoreVertexColors: 0
+  importTangentSpace: 0
+  splitTangentsAcrossSeams: 0
+  preserveUVs: 1
+  weldVertices: 1
+  useFileUnits: 1
+  convertUnits: 0
+  humanoidRootMotion: 0
+  clipAnimations: []
+  humanBones: []
+  skeletonBones: []
+  assetBundleName: gfbassets
+  assetBundleVariant:

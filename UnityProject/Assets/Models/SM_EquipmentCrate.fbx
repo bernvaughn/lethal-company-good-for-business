@@ -1,0 +1,48 @@
+; Placeholder FBX file for Equipment Crate model
+; Replace with actual model created in Blender/Unity
+; Expected: Wooden crate model (~0.5m cube), UV unwrapped for texture
+; Naming: SM_EquipmentCrate (Static Mesh)
+
+FBXHeaderExtension:  {
+    FBXHeaderVersion: 1003
+    FBXVersion: 7400
+    CreationTimeStamp:  {
+        Version: 1000
+        Year: 2024
+        Month: 1
+        Day: 1
+        Hour: 0
+        Minute: 0
+        Second: 0
+        Millisecond: 0
+    }
+    Creator: "GoodForBusiness Placeholder"
+    SceneInfo: "SceneInfo::GlobalInfo", "SceneInfo"::  {
+        Type: "UserData"
+        Version: 100
+        MetaData:  {
+            Version: 100
+            Title: ""
+            Subject: ""
+            Author: ""
+            Keywords: ""
+            Revision: ""
+            Comment: "Placeholder - replace with actual Equipment Crate model in Unity/Blender"
+        }
+        Properties70:  {
+            P: "DocumentUrl", "KString", "Url", "", "https://github.com/bernvaughn/lethal-company-good-for-business"
+            P: "SrcDocumentUrl", "KString", "Url", "", ""
+            P: "OriginalApplicationVendor", "KString", "", "", "GoodForBusiness"
+            P: "OriginalApplicationName", "KString", "", "", "Placeholder Generator"
+            P: "OriginalApplicationVersion", "KString", "", "", "1.0"
+            P: "OriginalDateTime_GMT", "KTime", "", "", "2024-01-01 00:00:00"
+            P: "OriginalFileName", "KString", "", "", "SM_EquipmentCrate.fbx"
+        }
+    }
+}
+FileId: "placeholder-file-id"
+CreationTime: "2024-01-01 00:00:00"
+Creator: "GoodForBusiness Placeholder"
+OtherFlags:  {
+    FlagPLE: 0
+}
