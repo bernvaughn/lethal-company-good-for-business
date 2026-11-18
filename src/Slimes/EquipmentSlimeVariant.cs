@@ -159,10 +159,7 @@ namespace GoodForBusiness.Slimes
             crateComponent.CreditValue = item.creditsWorth;
             crateComponent.itemValue = item.creditsWorth;
 
-            // Initialize the crate (runs Awake logic and spawn effects)
-            crateComponent.OnSpawn();
-
-            // Network spawn the crate if host
+            // Network spawn the crate if host (OnNetworkSpawn will handle initialization)
             var networkObj = crateObj.GetComponent<NetworkObject>();
             if (networkObj != null && NetworkManager.Singleton != null && NetworkManager.Singleton.IsServer)
             {

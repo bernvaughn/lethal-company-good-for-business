@@ -10,18 +10,16 @@ namespace GoodForBusiness.Core
         public float GrowthProgress;
         public bool IsGrown;
         public int OwnerPlayerId;
-        public ulong NetworkObjectId;
 
         public SlimeSaveData() { }
 
-        public SlimeSaveData(SlimeType type, UnityEngine.Vector3 position, float growthProgress, bool isGrown, int ownerPlayerId, ulong networkObjectId)
+        public SlimeSaveData(SlimeType type, UnityEngine.Vector3 position, float growthProgress, bool isGrown, int ownerPlayerId)
         {
             Type = type;
             Position = position;
             GrowthProgress = growthProgress;
             IsGrown = isGrown;
             OwnerPlayerId = ownerPlayerId;
-            NetworkObjectId = networkObjectId;
         }
     }
 }

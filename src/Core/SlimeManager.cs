@@ -5,6 +5,7 @@ using GoodForBusiness.Slimes;
 using GoodForBusiness.Stubs.Game;
 using LethalLib.Modules;
 using UnityEngine;
+using Unity.Netcode;
 
 namespace GoodForBusiness.Core
 {
@@ -46,18 +47,27 @@ namespace GoodForBusiness.Core
             if (!_activeSlimes.Contains(slime))
             {
                 _activeSlimes.Add(slime);
-                SaveToDisk();
+                // Only save on host to avoid conflicts
+                if (NetworkManager.Singleton == null || NetworkManager.Singleton.IsHost)
+                    SaveToDisk();
             }
         }
 
         public void UnregisterSlime(SlimeAI slime)
         {
             if (_activeSlimes.Remove(slime))
-                SaveToDisk();
+            {
+                if (NetworkManager.Singleton == null || NetworkManager.Singleton.IsHost)
+                    SaveToDisk();
+            }
         }
 
         public void OnNewDay()
         {
+            // Only host should trigger daily abilities
+            if (NetworkManager.Singleton != null && !NetworkManager.Singleton.IsHost)
+                return;
+
             // Trigger daily abilities for all active slimes
             foreach (var slime in _activeSlimes)
             {
@@ -71,7 +81,8 @@ namespace GoodForBusiness.Core
             if (scrapValue <= 0)
                 return false;
             slime.OnFedScrap(scrapValue);
-            SaveToDisk();
+            if (NetworkManager.Singleton == null || NetworkManager.Singleton.IsHost)
+                SaveToDisk();
             return true;
         }
 
@@ -86,8 +97,7 @@ namespace GoodForBusiness.Core
                     slime.transform.position,
                     slime.GrowthProgress,
                     slime.IsGrown,
-                    slime.OwnerPlayerId,
-                    slime.NetworkObjectId
+                    slime.OwnerPlayerId
                 );
             }
             return data;
@@ -144,12 +154,11 @@ namespace GoodForBusiness.Core
                 slimeAI.GrowthProgress = saveData.GrowthProgress;
                 slimeAI.IsGrown = saveData.IsGrown;
                 slimeAI.OwnerPlayerId = saveData.OwnerPlayerId;
-                slimeAI.NetworkObjectId = saveData.NetworkObjectId;
                 slimeAI.InitializeVariant();
 
                 RegisterSlime(slimeAI);
 
-                // Network spawn if host
+                // Network spawn if host (clients receive via NetworkObject.Spawn())
                 var networkObj = slimeObj.GetComponent<NetworkObject>();
                 if (networkObj != null && NetworkManager.Singleton != null && NetworkManager.Singleton.IsHost)
                 {
@@ -162,9 +171,13 @@ namespace GoodForBusiness.Core
 
         /// <summary>
         /// Saves all active slimes to disk as JSON.
+        /// Only runs on host to avoid conflicts.
         /// </summary>
         public void SaveToDisk()
         {
+            if (NetworkManager.Singleton != null && !NetworkManager.Singleton.IsHost)
+                return;
+
             try
             {
                 var dir = Path.GetDirectoryName(_saveFilePath);
@@ -235,7 +248,6 @@ namespace GoodForBusiness.Core
             writer.Append($",\"growthProgress\":{data.GrowthProgress}");
             writer.Append($",\"isGrown\":{data.IsGrown.ToString().ToLower()}");
             writer.Append($",\"ownerPlayerId\":{data.OwnerPlayerId}");
-            writer.Append($",\"networkObjectId\":{data.NetworkObjectId}");
             writer.Append('}');
             return writer.ToString();
         }
@@ -305,9 +317,6 @@ namespace GoodForBusiness.Core
                             break;
                         case "ownerPlayerId":
                             data.OwnerPlayerId = int.Parse(value);
-                            break;
-                        case "networkObjectId":
-                            data.NetworkObjectId = ulong.Parse(value);
                             break;
                         case "position":
                             data.Position = ParseVector3(value);

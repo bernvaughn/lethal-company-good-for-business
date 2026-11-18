@@ -6,6 +6,7 @@ using GoodForBusiness.Slimes;
 using GoodForBusiness.Stubs.Game;
 using LethalLib.Modules;
 using UnityEngine;
+using Unity.Netcode;
 
 namespace GoodForBusiness.Core
 {
@@ -31,6 +32,55 @@ namespace GoodForBusiness.Core
             RegisterSlimedBeehive();
             RegisterEquipmentCrate();
             RegisterSlimeEnemy();
+
+            // Register network prefabs for multiplayer spawning
+            RegisterNetworkPrefabs();
+        }
+
+        /// <summary>
+        /// Registers network prefabs with Netcode for multiplayer spawning.
+        /// This must be called after all prefabs are loaded and configured.
+        /// </summary>
+        private static void RegisterNetworkPrefabs()
+        {
+            if (_assetBundle == null)
+                return;
+
+            // Register Slime Egg prefab
+            var slimeEggPrefab = _assetBundle.LoadAsset<GameObject>("Assets/Prefabs/BP_SlimeEgg.prefab")
+                                ?? _assetBundle.LoadAsset<GameObject>("BP_SlimeEgg");
+            if (slimeEggPrefab != null && slimeEggPrefab.GetComponent<NetworkObject>() != null)
+            {
+                NetworkPrefabs.RegisterNetworkPrefab(slimeEggPrefab);
+                UnityEngine.Debug.Log("[GoodForBusiness] Registered Slime Egg as network prefab.");
+            }
+
+            // Register Slimed Beehive prefab
+            var beehivePrefab = _assetBundle.LoadAsset<GameObject>("Assets/Prefabs/BP_SlimedBeehive.prefab")
+                               ?? _assetBundle.LoadAsset<GameObject>("BP_SlimedBeehive");
+            if (beehivePrefab != null && beehivePrefab.GetComponent<NetworkObject>() != null)
+            {
+                NetworkPrefabs.RegisterNetworkPrefab(beehivePrefab);
+                UnityEngine.Debug.Log("[GoodForBusiness] Registered Slimed Beehive as network prefab.");
+            }
+
+            // Register Equipment Crate prefab
+            var cratePrefab = _assetBundle.LoadAsset<GameObject>("Assets/Prefabs/BP_EquipmentCrate.prefab")
+                             ?? _assetBundle.LoadAsset<GameObject>("BP_EquipmentCrate");
+            if (cratePrefab != null && cratePrefab.GetComponent<NetworkObject>() != null)
+            {
+                NetworkPrefabs.RegisterNetworkPrefab(cratePrefab);
+                UnityEngine.Debug.Log("[GoodForBusiness] Registered Equipment Crate as network prefab.");
+            }
+
+            // Register Slime Base prefab (enemy)
+            var slimePrefab = _assetBundle.LoadAsset<GameObject>("Assets/Prefabs/BP_SlimeBase.prefab")
+                             ?? _assetBundle.LoadAsset<GameObject>("BP_SlimeBase");
+            if (slimePrefab != null && slimePrefab.GetComponent<NetworkObject>() != null)
+            {
+                NetworkPrefabs.RegisterNetworkPrefab(slimePrefab);
+                UnityEngine.Debug.Log("[GoodForBusiness] Registered Slime Base as network prefab.");
+            }
         }
 
         /// <summary>
@@ -73,6 +123,12 @@ namespace GoodForBusiness.Core
             if (eggComponent == null)
             {
                 eggComponent = slimeEggPrefab.AddComponent<SlimeEggItem>();
+            }
+
+            // Ensure the prefab has a NetworkObject for multiplayer
+            if (slimeEggPrefab.GetComponent<NetworkObject>() == null)
+            {
+                slimeEggPrefab.AddComponent<NetworkObject>();
             }
 
             // Set the spawn prefab on the item asset
@@ -131,6 +187,12 @@ namespace GoodForBusiness.Core
             if (beehiveComponent == null)
                 beehiveComponent = beehivePrefab.AddComponent<SlimedBeehiveItem>();
 
+            // Ensure the prefab has a NetworkObject for multiplayer
+            if (beehivePrefab.GetComponent<NetworkObject>() == null)
+            {
+                beehivePrefab.AddComponent<NetworkObject>();
+            }
+
             beehiveComponent.CreditValue = _config.SlimedBeehiveValue.Value;
             beehiveItemAsset.spawnPrefab = beehivePrefab;
 
@@ -187,6 +249,12 @@ namespace GoodForBusiness.Core
             if (crateComponent == null)
                 crateComponent = cratePrefab.AddComponent<EquipmentCrateItem>();
 
+            // Ensure the prefab has a NetworkObject for multiplayer
+            if (cratePrefab.GetComponent<NetworkObject>() == null)
+            {
+                cratePrefab.AddComponent<NetworkObject>();
+            }
+
             crateItemAsset.spawnPrefab = cratePrefab;
 
             var scrapRegistration = new ScrapItemRegistration
@@ -240,6 +308,12 @@ namespace GoodForBusiness.Core
             var slimeAI = slimePrefab.GetComponent<SlimeAI>();
             if (slimeAI == null)
                 slimeAI = slimePrefab.AddComponent<SlimeAI>();
+
+            // Ensure the prefab has a NetworkObject for multiplayer
+            if (slimePrefab.GetComponent<NetworkObject>() == null)
+            {
+                slimePrefab.AddComponent<NetworkObject>();
+            }
 
             slimeEnemyType.enemyPrefab = slimePrefab;
             slimeEnemyType.PowerLevel = 0; // Passive

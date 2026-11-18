@@ -3,6 +3,7 @@ using GoodForBusiness.Core;
 using GoodForBusiness.Stubs.Game;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Netcode;
 
 namespace GoodForBusiness.Egg
 {
@@ -38,8 +39,15 @@ namespace GoodForBusiness.Egg
                         ?? _assetBundle.LoadAsset<GameObject>("BP_SlimeEgg");
         }
 
+        /// <summary>
+        /// Spawns eggs in the current level. Only runs on the host to prevent desyncs.
+        /// </summary>
         public void SpawnEggsInLevel()
         {
+            // Only host should spawn eggs
+            if (NetworkManager.Singleton != null && !NetworkManager.Singleton.IsHost)
+                return;
+
             if (_config == null || EggPrefab == null || !_config.EnableMod.Value)
                 return;
 
@@ -67,6 +75,13 @@ namespace GoodForBusiness.Egg
 
             // Randomly assign slime type based on enabled variants
             eggItem.EggType = SelectRandomSlimeType();
+
+            // Network spawn the egg
+            var networkObj = egg.GetComponent<NetworkObject>();
+            if (networkObj != null && NetworkManager.Singleton != null && NetworkManager.Singleton.IsHost)
+            {
+                networkObj.Spawn();
+            }
         }
 
         private LevelTypes GetCurrentLevelType()

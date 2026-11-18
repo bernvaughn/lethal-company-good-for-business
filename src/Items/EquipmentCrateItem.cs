@@ -1,6 +1,7 @@
 using GoodForBusiness.Configuration;
 using GoodForBusiness.Stubs.Game;
 using UnityEngine;
+using Unity.Netcode;
 
 namespace GoodForBusiness.Items
 {
@@ -54,6 +55,33 @@ namespace GoodForBusiness.Items
             itemValue = CreditValue;
         }
 
+        public override void OnNetworkSpawn()
+        {
+            base.OnNetworkSpawn();
+
+            // Initialize the crate on all clients when spawned over the network
+            InitializeCrate();
+        }
+
+        /// <summary>
+        /// Initializes the crate on spawn. Called on all clients via OnNetworkSpawn.
+        /// </summary>
+        private void InitializeCrate()
+        {
+            // Play visual feedback (particle effect) if enabled
+            if (PlaySpawnEffect)
+            {
+                PlaySpawnEffects();
+            }
+
+            // Auto-pickup: transfer contents to nearest player immediately
+            // Only run auto-pickup on the host to avoid duplicate item granting
+            if (AutoPickup && IsServer)
+            {
+                TryAutoPickup();
+            }
+        }
+
         public override void OnPickup()
         {
             if (_hasBeenPickedUp)
@@ -69,25 +97,13 @@ namespace GoodForBusiness.Items
             }
 
             // Destroy the crate after its contents are claimed
-            UnityEngine.Object.Destroy(gameObject);
-        }
-
-        /// <summary>
-        /// Called when the crate spawns. Plays visual feedback and handles
-        /// auto-pickup if configured.
-        /// </summary>
-        public void OnSpawn()
-        {
-            // Play visual feedback (particle effect) if enabled
-            if (PlaySpawnEffect)
+            if (IsServer && NetworkObject != null && NetworkObject.IsSpawned)
             {
-                PlaySpawnEffects();
+                NetworkObject.Despawn();
             }
-
-            // Auto-pickup: transfer contents to nearest player immediately
-            if (AutoPickup)
+            else
             {
-                TryAutoPickup();
+                UnityEngine.Object.Destroy(gameObject);
             }
         }
 
@@ -138,8 +154,15 @@ namespace GoodForBusiness.Items
                     $"Gave {ContainedItem.name}.");
             }
 
-            // Destroy the crate since contents were transferred
-            UnityEngine.Object.Destroy(gameObject);
+            // Despawn the crate since contents were transferred
+            if (NetworkObject != null && NetworkObject.IsSpawned)
+            {
+                NetworkObject.Despawn();
+            }
+            else
+            {
+                UnityEngine.Object.Destroy(gameObject);
+            }
         }
 
         private PlayerControllerB? FindNearestPlayer()
