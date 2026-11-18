@@ -1,0 +1,61 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyName>GoodForBusiness</AssemblyName>
+    <RootNamespace>GoodForBusiness</RootNamespace>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <RestoreDisabled>true</RestoreDisabled>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
+    <GenerateAssemblyDescriptionAttribute>false</GenerateAssemblyDescriptionAttribute>
+    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
+    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
+    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+    <GenerateAssemblyCopyrightAttribute>false</GenerateAssemblyCopyrightAttribute>
+    <GenerateAssemblyVersionAttribute>true</GenerateAssemblyVersionAttribute>
+    <GenerateAssemblyFileVersionAttribute>true</GenerateAssemblyFileVersionAttribute>
+    <Version>1.0.0</Version>
+    <FileVersion>1.0.0</FileVersion>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <Optimize>true</Optimize>
+    <DebugType>none</DebugType>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+    <Optimize>false</Optimize>
+    <DebugType>full</DebugType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!--
+      BepInEx.Core is stubbed locally in src/Stubs/ for compilation without game assemblies.
+      When building against the real game, replace these stubs with references to
+      the game's managed assemblies and the BepInEx.Core NuGet package.
+    -->
+    <!-- <PackageReference Include="BepInEx.Core" Version="5.4.22" /> -->
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="src/Stubs/**/*.cs" />
+    <Compile Include="src/**/*.cs" Exclude="src/Stubs/**/*.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="manifest.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="Thunderstore/thunderstore.toml" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <!-- Skip NuGet package resolution since we use local stubs only -->
+  <Target Name="ResolvePackageAssets" />
+  <Target Name="ResolvePackageDependencies" />
+  <Target Name="ResolveNuGetPackageAssets" />
+  <Target Name="Restore" />
+
+</Project>

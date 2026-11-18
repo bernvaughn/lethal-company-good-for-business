@@ -1,0 +1,79 @@
+using UnityEngine;
+using System;
+
+namespace GoodForBusiness.Stubs.Game
+{
+    /// <summary>
+    /// Stubs for Lethal Company game types that will be replaced
+    /// with references to the actual game assemblies when building
+    /// against a real game installation.
+    /// </summary>
+
+    public class GrabbableObject : UnityEngine.MonoBehaviour
+    {
+        public int itemValue;
+        public bool isHeld;
+        public int playerHeldBy;
+
+        public virtual void OnPickup() { }
+        public virtual void OnDrop() { }
+    }
+
+    public class EnemyAI : UnityEngine.MonoBehaviour
+    {
+        public bool isEnemy;
+        public Vector3 transformPosition => transform.position;
+    }
+
+    public class NetworkObject : UnityEngine.MonoBehaviour
+    {
+        public ulong NetworkObjectId { get; set; }
+        public bool IsSpawned { get; set; }
+        public void Spawn() { }
+        public void Despawn() { }
+    }
+
+    public class NetworkVariable<T>
+    {
+        public T Value { get; set; } = default!;
+        public event Action<T>? OnValueChanged;
+        public NetworkVariable() { }
+        public NetworkVariable(T value) { Value = value; }
+    }
+
+    public static class NetworkManager
+    {
+        public static NetworkObject? SpawnObject(GameObject prefab, Vector3 position, Quaternion rotation)
+        {
+            var obj = UnityEngine.Object.Instantiate(prefab);
+            return obj.GetComponent<NetworkObject>();
+        }
+    }
+
+    public class RoundManager : UnityEngine.MonoBehaviour
+    {
+        public static RoundManager Instance { get; private set; } = null!;
+        public event Action? OnSpawnScrap;
+        public void SpawnScrapInLevel() { OnSpawnScrap?.Invoke(); }
+    }
+
+    public class StartOfRound : UnityEngine.MonoBehaviour
+    {
+        public static StartOfRound Instance { get; private set; } = null!;
+        public event Action? OnNewDay;
+        public void QuotaReset() { OnNewDay?.Invoke(); }
+    }
+
+    public class PlayerControllerB : UnityEngine.MonoBehaviour
+    {
+        public static PlayerControllerB? localPlayerController;
+        public int playerClientId;
+        public Vector3 transformPosition => transform.position;
+    }
+
+    public class ScanNodeProperties : UnityEngine.ScriptableObject
+    {
+        public string headerText = "";
+        public string subText = "";
+    }
+}

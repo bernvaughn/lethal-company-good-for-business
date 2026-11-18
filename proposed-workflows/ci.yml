@@ -1,0 +1,59 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, "task/*" ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore NuGet packages
+        run: dotnet restore GoodForBusiness.csproj
+
+      - name: Build Debug
+        run: dotnet build GoodForBusiness.csproj --configuration Debug --no-restore
+
+      - name: Build Release
+        run: dotnet build GoodForBusiness.csproj --configuration Release --no-restore
+
+      - name: Run tests
+        run: dotnet test Tests/GoodForBusiness.Tests.csproj --configuration Release --no-build
+
+  package:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Build Release
+        run: dotnet build GoodForBusiness.csproj --configuration Release
+
+      - name: Install tcli
+        run: dotnet tool install --global tcli
+
+      - name: Build Thunderstore package
+        run: tcli build
+
+      - name: Upload package artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: goodforbusiness-package
+          path: '*.zip'

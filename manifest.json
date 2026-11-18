@@ -1,0 +1,10 @@
+{
+  "name": "GoodForBusiness",
+  "version_number": "1.0.0",
+  "website_url": "https://github.com/bernvaughn/lethal-company-good-for-business",
+  "description": "Adds slime eggs that hatch into helpful slimes with unique abilities",
+  "dependencies": [
+    "BepInEx-BepInExPack-5.4.2100",
+    "Evaisa-LethalLib-0.15.0"
+  ]
+}
