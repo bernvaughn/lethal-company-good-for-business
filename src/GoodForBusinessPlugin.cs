@@ -23,6 +23,7 @@ namespace GoodForBusiness
         public AssetBundle? AssetBundle { get; private set; }
         public PluginConfig? Config { get; private set; }
         public SlimeEggSpawner? EggSpawner { get; private set; }
+        public SlimeManager? SlimeManager { get; private set; }
 
         public GoodForBusinessPlugin()
         {
@@ -54,6 +55,9 @@ namespace GoodForBusiness
 
             // Initialize egg spawner
             InitializeEggSpawner();
+
+            // Initialize slime manager singleton
+            InitializeSlimeManager();
         }
 
         private void InitializeSlimeVisuals()
@@ -138,6 +142,14 @@ namespace GoodForBusiness
             {
                 Logger.LogWarning("Cannot initialize egg spawner: config or asset bundle missing.");
             }
+        }
+
+        private void InitializeSlimeManager()
+        {
+            var managerObj = new GameObject("SlimeManager");
+            DontDestroyOnLoad(managerObj);
+            SlimeManager = managerObj.AddComponent<SlimeManager>();
+            Logger.LogInfo("[GoodForBusiness] Slime Manager singleton initialized.");
         }
     }
 }
