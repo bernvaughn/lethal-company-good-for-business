@@ -9,11 +9,18 @@ namespace GoodForBusiness.Stubs.Game
     /// against a real game installation.
     /// </summary>
 
+    public class ScanNodeProperties : UnityEngine.ScriptableObject
+    {
+        public string headerText = "";
+        public string subText = "";
+    }
+
     public class GrabbableObject : UnityEngine.MonoBehaviour
     {
         public int itemValue;
         public bool isHeld;
         public int playerHeldBy;
+        public ScanNodeProperties scanNodeProperties;
 
         public virtual void OnPickup() { }
         public virtual void OnDrop() { }
@@ -71,9 +78,30 @@ namespace GoodForBusiness.Stubs.Game
         public Vector3 transformPosition => transform.position;
     }
 
-    public class ScanNodeProperties : UnityEngine.ScriptableObject
+    public enum LevelTypes
     {
-        public string headerText = "";
-        public string subText = "";
+        Experiment,
+        Assurance,
+        Vow,
+        March,
+        Offense,
+        Rend,
+        Dine,
+        Modded
+    }
+
+    public class Item : ScriptableObject
+    {
+        public GameObject spawnPrefab;
+        public bool twoHanded;
+        public float weight;
+        public int creditsWorth;
+    }
+
+    public class EnemyType : ScriptableObject
+    {
+        public GameObject enemyPrefab;
+        public int PowerLevel;
+        public int spawnWeight;
     }
 }
