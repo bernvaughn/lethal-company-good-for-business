@@ -37,16 +37,6 @@ namespace Unity.Netcode
         public static implicit operator T(NetworkVariable<T> variable) => variable.Value;
     }
 
-    public class NetworkVariable<T> where T : class
-    {
-        public NetworkVariable() { }
-        public NetworkVariable(T value) { Value = value; }
-        public T Value { get; set; }
-        public event Action<T, T> OnValueChanged;
-        public void Set(T value) { Value = value; }
-        public bool IsDirty => false;
-    }
-
     public class NetworkList<T> where T : struct
     {
         public int Count => 0;
