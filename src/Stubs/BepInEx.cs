@@ -111,3 +111,42 @@ namespace BepInEx.Configuration
         public AcceptableValueList(params T[] values) { }
     }
 }
+
+namespace LethalLib.Modules
+{
+    public class ScrapItemRegistration
+    {
+        public Item Item { get; set; } = null!;
+        public System.Collections.Generic.Dictionary<GoodForBusiness.Stubs.Game.LevelTypes, int> Rarities { get; set; } = new();
+    }
+
+    public static class Items
+    {
+        private static readonly System.Collections.Generic.List<Item> _registeredItems = new();
+
+        public static void RegisterScrap(ScrapItemRegistration registration)
+        {
+            _registeredItems.Add(registration.Item);
+        }
+
+        public static Item? FindItemByName(string name)
+        {
+            return _registeredItems.Find(i => i.name == name);
+        }
+    }
+
+    public static class Enemies
+    {
+        private static readonly System.Collections.Generic.List<EnemyType> _registeredEnemies = new();
+
+        public static void RegisterEnemy(EnemyType enemyType)
+        {
+            _registeredEnemies.Add(enemyType);
+        }
+
+        public static EnemyType? GetEnemyType(string name)
+        {
+            return _registeredEnemies.Find(e => e.name == name);
+        }
+    }
+}
