@@ -64,7 +64,7 @@
 
   <ItemGroup>
     <None Include="manifest.json" CopyToOutputDirectory="PreserveNewest" />
-    <None Include="Thunderstore/thunderstore.toml" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="thunderstore.toml" CopyToOutputDirectory="PreserveNewest" />
     <None Include="README.md" CopyToOutputDirectory="PreserveNewest" />
     <None Include="icon.png" CopyToOutputDirectory="PreserveNewest" Condition="Exists('icon.png')" />
   </ItemGroup>
