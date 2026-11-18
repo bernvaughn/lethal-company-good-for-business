@@ -15,6 +15,16 @@ namespace GoodForBusiness.Egg
         public float Weight => 0.5f;
         public int CreditsWorth => 0;
 
+        protected override void Awake()
+        {
+            base.Awake();
+            // Set scanner name to "Slime Egg"
+            if (scanNodeProperties == null)
+                scanNodeProperties = ScriptableObject.CreateInstance<ScanNodeProperties>();
+            scanNodeProperties.headerText = "Slime Egg";
+            scanNodeProperties.subText = "A mysterious egg that hatches into a slime";
+        }
+
         public void StartHatching()
         {
             IsHatching = true;

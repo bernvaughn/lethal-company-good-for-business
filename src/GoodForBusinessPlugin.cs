@@ -7,6 +7,7 @@ using System.Reflection;
 using GoodForBusiness.Configuration;
 using GoodForBusiness.Core;
 using GoodForBusiness.Patches;
+using GoodForBusiness.Egg;
 using LethalLib.Modules;
 
 namespace GoodForBusiness
@@ -20,6 +21,7 @@ namespace GoodForBusiness
 
         public AssetBundle? AssetBundle { get; private set; }
         public PluginConfig? Config { get; private set; }
+        public SlimeEggSpawner? EggSpawner { get; private set; }
 
         public GoodForBusinessPlugin()
         {
@@ -29,22 +31,25 @@ namespace GoodForBusiness
         public new void Awake()
         {
             Logger.LogInfo($"{PluginInfo.Name} v{PluginInfo.Version} loaded.");
-            
+
             // Initialize configuration
             Config = new PluginConfig(Config);
-            
+
             // Load asset bundle
             LoadAssetBundle();
-            
+
             // Register with LethalLib (requires asset bundle)
             if (AssetBundle != null && Config != null)
             {
                 LethalLibRegistration.RegisterAll(Config, AssetBundle);
             }
-            
+
             // Apply Harmony patches
             var harmony = new Harmony(PluginInfo.GUID);
             harmony.PatchAll();
+
+            // Initialize egg spawner
+            InitializeEggSpawner();
         }
 
         public new void Start()
@@ -88,6 +93,22 @@ namespace GoodForBusiness
             catch (Exception ex)
             {
                 Logger.LogError($"Exception loading asset bundle: {ex.Message}");
+            }
+        }
+
+        private void InitializeEggSpawner()
+        {
+            var spawnerObj = new GameObject("SlimeEggSpawner");
+            DontDestroyOnLoad(spawnerObj);
+            EggSpawner = spawnerObj.AddComponent<SlimeEggSpawner>();
+
+            if (Config != null && AssetBundle != null)
+            {
+                EggSpawner.Initialize(Config, AssetBundle);
+            }
+            else
+            {
+                Logger.LogWarning("Cannot initialize egg spawner: config or asset bundle missing.");
             }
         }
     }
