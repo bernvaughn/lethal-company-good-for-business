@@ -1,5 +1,6 @@
 using GoodForBusiness.Core;
 using GoodForBusiness.Configuration;
+using GoodForBusiness.Slimes.Variants;
 using GoodForBusiness.Stubs.Game;
 using System.Collections;
 using UnityEngine;
@@ -16,15 +17,52 @@ namespace GoodForBusiness.Slimes
         AbilityActive
     }
 
-    public abstract class SlimeVariantBase : MonoBehaviour
+    /// <summary>
+    /// Base class for slime variant implementations.
+    /// Implements ISlimeVariant and provides common functionality.
+    /// </summary>
+    public abstract class SlimeVariantBase : MonoBehaviour, ISlimeVariant
     {
         public abstract SlimeType Type { get; }
         public abstract int GrowthCost { get; }
         public abstract Color SlimeColor { get; }
-        public abstract void OnFedScrap(int scrapValue);
-        public abstract void ExecuteDailyAbility();
+
+        /// <summary>
+        /// Called when the slime is fed scrap.
+        /// Override to add variant-specific feeding behavior.
+        /// </summary>
+        public virtual void OnFedScrap(int scrapValue)
+        {
+            // Base implementation does nothing; growth is handled by SlimeAI
+        }
+
+        /// <summary>
+        /// Executes the daily ability for this variant.
+        /// Must be implemented by derived classes.
+        /// </summary>
+        /// <param name="slime">The SlimeAI instance executing the ability.</param>
+        public abstract void ExecuteDailyAbility(SlimeAI slime);
+
+        /// <summary>
+        /// Gets the user-friendly display name for this variant.
+        /// </summary>
         public abstract string GetDisplayName();
+
+        /// <summary>
+        /// Gets the description text for this variant.
+        /// </summary>
         public abstract string GetDescription();
+
+        /// <summary>
+        /// Legacy method for backward compatibility.
+        /// Derived classes should implement ExecuteDailyAbility(SlimeAI) instead.
+        /// </summary>
+        [System.Obsolete("Use ExecuteDailyAbility(SlimeAI slime) instead.")]
+        public void ExecuteDailyAbility()
+        {
+            // This will be called by old code; derived classes should override the new method
+            UnityEngine.Debug.LogWarning($"[GoodForBusiness] {GetType().Name} uses obsolete ExecuteDailyAbility() without SlimeAI parameter.");
+        }
     }
 
     public class SlimeAI : EnemyAI
@@ -85,7 +123,7 @@ namespace GoodForBusiness.Slimes
         [SerializeField] private float _baseBobAmount = 0.5f;
         [SerializeField] private float _bobSpeed = 1.5f;
 
-        private SlimeVariantBase? _variant;
+        private ISlimeVariant? _variant;
         private PluginConfig? _config;
         private Coroutine? _stateCoroutine;
         private Coroutine? _bobCoroutine;
@@ -107,6 +145,9 @@ namespace GoodForBusiness.Slimes
                 _stateCoroutine = StartCoroutine(StateMachineRoutine());
                 _bobCoroutine = StartCoroutine(BobRoutine());
             }
+
+            // Apply visuals after variant is initialized
+            SlimeVisuals.ApplyVariantVisuals(this);
 
             _isInitialized = true;
         }
@@ -139,25 +180,20 @@ namespace GoodForBusiness.Slimes
         {
             _config = GoodForBusinessPlugin.Instance?.Config;
 
-            switch (SlimeType)
+            // Add the appropriate variant component based on slime type
+            if (SlimeType != SlimeType.None)
             {
-                case SlimeType.Equipment:
-                    _variant = gameObject.AddComponent<EquipmentSlimeVariant>();
-                    break;
-                case SlimeType.BeeLover:
-                    _variant = gameObject.AddComponent<BeeLoverSlimeVariant>();
-                    break;
-                default:
-                    UnityEngine.Debug.LogWarning($"[GoodForBusiness] Unknown slime type: {SlimeType}");
-                    break;
-            }
-
-            if (_variant != null)
-            {
-                var renderer = GetComponentInChildren<Renderer>();
-                if (renderer != null)
+                switch (SlimeType)
                 {
-                    renderer.material.color = _variant.SlimeColor;
+                    case SlimeType.Equipment:
+                        _variant = gameObject.AddComponent<EquipmentSlimeVariant>();
+                        break;
+                    case SlimeType.BeeLover:
+                        _variant = gameObject.AddComponent<BeeLoverSlimeVariant>();
+                        break;
+                    default:
+                        UnityEngine.Debug.LogWarning($"[GoodForBusiness] Unknown slime type: {SlimeType}");
+                        break;
                 }
             }
 
@@ -431,7 +467,7 @@ namespace GoodForBusiness.Slimes
             if (!IsGrown || !IsServer)
                 return;
 
-            _variant?.ExecuteDailyAbility();
+            _variant?.ExecuteDailyAbility(this);
             SetStateServerRpc(SlimeState.AbilityActive);
             PlayAbilityEffects();
 
