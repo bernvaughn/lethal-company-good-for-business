@@ -15,6 +15,11 @@ namespace GoodForBusiness.Patches
         [HarmonyPostfix]
         public static void OnNewDayPatch()
         {
+            // Only the host should handle egg hatching and daily abilities
+            // to prevent duplicate execution across clients
+            if (NetworkManager.Singleton == null || !NetworkManager.Singleton.IsHost)
+                return;
+
             // Called when a new day starts - trigger slime hatching and daily abilities
             SlimeManager.Instance?.OnNewDay();
 
@@ -69,28 +74,15 @@ namespace GoodForBusiness.Patches
             eggItem.StartHatching();
 
             // Use the network sync component to hatch the egg properly
-            if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsHost)
+            var hatchingSync = FindObjectOfType<SlimeHatchingSync>();
+            if (hatchingSync != null)
             {
-                // Find a SlimeHatchingSync component in the scene to use for hatching
-                var hatchingSync = FindObjectOfType<SlimeHatchingSync>();
-                if (hatchingSync != null)
-                {
-                    hatchingSync.HatchEggServerRpc(eggItem.transform.position, (int)eggItem.EggType, ownerPlayerId);
-                }
-                else
-                {
-                    // Fallback to direct instantiation if no sync component found
-                    HatchEggDirect(eggItem, ownerPlayerId);
-                }
+                hatchingSync.HatchEggServerRpc(eggItem.transform.position, (int)eggItem.EggType, ownerPlayerId);
             }
             else
             {
-                // Client-side: request hatch from server
-                var hatchingSync = FindObjectOfType<SlimeHatchingSync>();
-                if (hatchingSync != null)
-                {
-                    hatchingSync.HatchEggServerRpc(eggItem.transform.position, (int)eggItem.EggType, ownerPlayerId);
-                }
+                // Fallback to direct instantiation if no sync component found
+                HatchEggDirect(eggItem, ownerPlayerId);
             }
 
             // Destroy the egg
@@ -122,7 +114,7 @@ namespace GoodForBusiness.Patches
             // Register with SlimeManager
             SlimeManager.Instance?.RegisterSlime(slimeAI);
 
-            // Network spawn if host
+            // Network spawn (host only)
             var networkObj = slimeObj.GetComponent<NetworkObject>();
             if (networkObj != null && NetworkManager.Singleton != null && NetworkManager.Singleton.IsHost)
             {

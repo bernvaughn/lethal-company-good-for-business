@@ -11,6 +11,10 @@ namespace GoodForBusiness.Patches
         [HarmonyPostfix]
         public static void OnSpawnScrapPatch()
         {
+            // Only the host should spawn eggs to prevent desyncs
+            if (NetworkManager.Singleton == null || !NetworkManager.Singleton.IsHost)
+                return;
+
             // Hook into scrap spawning to add slime eggs
             SlimeEggSpawner.Instance?.SpawnEggsInLevel();
         }
@@ -23,6 +27,7 @@ namespace GoodForBusiness.Patches
         public static void OnLoadNewLevelPatch()
         {
             // Restore slimes from save data after level loads
+            // Only host spawns the network objects; clients receive them via NetworkObject.Spawn()
             SlimeManager.Instance?.RestoreSlimesFromSave();
         }
     }

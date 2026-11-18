@@ -21,13 +21,18 @@ namespace GoodForBusiness.Slimes
     public class SlimeAI : EnemyAI
     {
         [Header("Slime Configuration")]
-        public SlimeType SlimeType { get; set; } = SlimeType.None;
+        public SlimeType SlimeType
+        {
+            get => (SlimeType)SyncSlimeType.Value;
+            set => SyncSlimeType.Value = (int)value;
+        }
 
         [Header("Network Sync")]
         public NetworkVariable<int> SyncState = new NetworkVariable<int>((int)SlimeState.Idle);
         public NetworkVariable<float> SyncGrowthProgress = new NetworkVariable<float>(0f);
         public NetworkVariable<bool> SyncIsGrown = new NetworkVariable<bool>(false);
         public NetworkVariable<int> SyncOwnerPlayerId = new NetworkVariable<int>(-1);
+        public NetworkVariable<int> SyncSlimeType = new NetworkVariable<int>((int)SlimeType.None);
 
         [Header("Networking Components")]
         [SerializeField] private SlimeNetworkTransform? _networkTransform;
