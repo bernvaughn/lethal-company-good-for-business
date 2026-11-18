@@ -8,15 +8,16 @@ using UnityEngine;
 
 namespace GoodForBusiness.Slimes
 {
-    public class EquipmentSlimeVariant : SlimeVariantBase
+    public class EquipmentSlimeVariant : MonoBehaviour, ISlimeVariant
     {
-        public override SlimeType Type => SlimeType.Equipment;
-        public override Color SlimeColor => Color.blue;
+        public SlimeType Type => SlimeType.Equipment;
+        public Color SlimeColor => Color.blue;
 
         private PluginConfig? _config;
         private List<(Item item, int weight)> _dropTable = new();
+        private SlimeAI? _slimeAI;
 
-        public override int GrowthCost
+        public int GrowthCost
         {
             get => _config?.EquipmentSlimeGrowthCost.Value ?? 300;
         }
@@ -24,6 +25,7 @@ namespace GoodForBusiness.Slimes
         private void Awake()
         {
             _config = GoodForBusinessPlugin.Instance?.Config;
+            _slimeAI = GetComponent<SlimeAI>();
             ParseDropTable();
             // Register this variant
             SlimeVariantRegistry.Register(this);
@@ -74,14 +76,14 @@ namespace GoodForBusiness.Slimes
             return json.Substring(idx, end - idx).Trim('"');
         }
 
-        public override void OnFedScrap(int scrapValue)
+        public void OnFedScrap(int scrapValue)
         {
-            // Growth handled by base class
+            // Growth handled by SlimeAI
         }
 
-        public override void ExecuteDailyAbility(SlimeAI slime)
+        public void ExecuteDailyAbility(SlimeAI slime)
         {
-            if (_dropTable.Count == 0 || StartOfRound.Instance == null)
+            if (_dropTable.Count == 0 || StartOfRound.Instance == null || _slimeAI == null)
                 return;
 
             int totalWeight = 0;
@@ -104,16 +106,10 @@ namespace GoodForBusiness.Slimes
                 return;
 
             Vector3 spawnPos = slime.transform.position;
-            var crateObj = UnityEngine.Object.Instantiate(selectedItem.spawnPrefab, spawnPos, Quaternion.identity);
-
-            var networkObj = crateObj.GetComponent<NetworkObject>();
-            if (networkObj != null && NetworkManager.Singleton != null && NetworkManager.Singleton.IsHost)
-            {
-                networkObj.Spawn();
-            }
+            _slimeAI.SpawnItemAt(selectedItem.name, spawnPos);
         }
 
-        public override string GetDisplayName() => "Equipment Slime";
-        public override string GetDescription() => "A blue slime that produces random equipment daily.";
+        public string GetDisplayName() => "Equipment Slime";
+        public string GetDescription() => "A blue slime that produces random equipment daily.";
     }
 }

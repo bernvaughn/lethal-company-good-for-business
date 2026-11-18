@@ -9,14 +9,15 @@ using UnityEngine.AI;
 
 namespace GoodForBusiness.Slimes
 {
-    public class BeeLoverSlimeVariant : SlimeVariantBase
+    public class BeeLoverSlimeVariant : MonoBehaviour, ISlimeVariant
     {
-        public override SlimeType Type => SlimeType.BeeLover;
-        public override Color SlimeColor => new Color(1f, 0.8f, 0f);
+        public SlimeType Type => SlimeType.BeeLover;
+        public Color SlimeColor => new Color(1f, 0.8f, 0f);
 
         private PluginConfig? _config;
+        private SlimeAI? _slimeAI;
 
-        public override int GrowthCost
+        public int GrowthCost
         {
             get => _config?.BeeLoverSlimeGrowthCost.Value ?? 400;
         }
@@ -24,18 +25,19 @@ namespace GoodForBusiness.Slimes
         private void Awake()
         {
             _config = GoodForBusinessPlugin.Instance?.Config;
+            _slimeAI = GetComponent<SlimeAI>();
             // Register this variant
             SlimeVariantRegistry.Register(this);
         }
 
-        public override void OnFedScrap(int scrapValue)
+        public void OnFedScrap(int scrapValue)
         {
             // Growth handled by base class
         }
 
-        public override void ExecuteDailyAbility(SlimeAI slime)
+        public void ExecuteDailyAbility(SlimeAI slime)
         {
-            if (StartOfRound.Instance == null)
+            if (StartOfRound.Instance == null || _slimeAI == null)
                 return;
 
             var detectionRange = _config?.BeeDetectionRange.Value ?? 30f;
@@ -44,7 +46,8 @@ namespace GoodForBusiness.Slimes
             if (beehive == null)
                 return;
 
-            SpawnSlimedBeehive(beehive.transform.position);
+            int creditValue = _config?.SlimedBeehiveValue.Value ?? 175;
+            _slimeAI.SpawnItemAt("SlimedBeehive", beehive.transform.position, creditValue);
         }
 
         private EnemyAI? FindNearestBeehive(float range)
@@ -78,27 +81,7 @@ namespace GoodForBusiness.Slimes
             return nearestHive;
         }
 
-        private void SpawnSlimedBeehive(Vector3 position)
-        {
-            var beehiveItem = LethalLib.Modules.Items.FindItemByName("SlimedBeehive");
-            if (beehiveItem == null || beehiveItem.spawnPrefab == null)
-                return;
-
-            var beehiveObj = UnityEngine.Object.Instantiate(beehiveItem.spawnPrefab, position, Quaternion.identity);
-            var beehiveComponent = beehiveObj.GetComponent<SlimedBeehiveItem>();
-            if (beehiveComponent != null)
-            {
-                beehiveComponent.CreditValue = _config?.SlimedBeehiveValue.Value ?? 175;
-            }
-
-            var networkObj = beehiveObj.GetComponent<NetworkObject>();
-            if (networkObj != null && NetworkManager.Singleton != null && NetworkManager.Singleton.IsHost)
-            {
-                networkObj.Spawn();
-            }
-        }
-
-        public override string GetDisplayName() => "Bee Lover Slime";
-        public override string GetDescription() => "A yellow and black slime that hunts beehives.";
+        public string GetDisplayName() => "Bee Lover Slime";
+        public string GetDescription() => "A yellow and black slime that hunts beehives.";
     }
 }

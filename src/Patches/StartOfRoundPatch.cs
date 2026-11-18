@@ -3,6 +3,7 @@ using GoodForBusiness.Stubs.Game;
 using GoodForBusiness.Core;
 using GoodForBusiness.Egg;
 using GoodForBusiness.Slimes;
+using GoodForBusiness.Networking;
 using LethalLib.Modules;
 using UnityEngine;
 
@@ -37,7 +38,7 @@ namespace GoodForBusiness.Patches
                     var item = player.ItemSlots[i];
                     if (item is SlimeEggItem eggItem && !eggItem.IsHatching)
                     {
-                        HatchEgg(eggItem);
+                        HatchEgg(eggItem, player.playerClientId);
                         player.ItemSlots[i] = null;
                     }
                 }
@@ -54,19 +55,50 @@ namespace GoodForBusiness.Patches
                 var item = ShipBuildModeManager.Instance.shipStorage[i];
                 if (item is SlimeEggItem eggItem && !eggItem.IsHatching)
                 {
-                    HatchEgg(eggItem);
+                    HatchEgg(eggItem, -1);
                     ShipBuildModeManager.Instance.shipStorage[i] = null;
                 }
             }
         }
 
-        private static void HatchEgg(SlimeEggItem eggItem)
+        private static void HatchEgg(SlimeEggItem eggItem, int ownerPlayerId)
         {
             if (eggItem == null || eggItem.EggType == SlimeType.None)
                 return;
 
             eggItem.StartHatching();
 
+            // Use the network sync component to hatch the egg properly
+            if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsHost)
+            {
+                // Find a SlimeHatchingSync component in the scene to use for hatching
+                var hatchingSync = FindObjectOfType<SlimeHatchingSync>();
+                if (hatchingSync != null)
+                {
+                    hatchingSync.HatchEggServerRpc(eggItem.transform.position, (int)eggItem.EggType, ownerPlayerId);
+                }
+                else
+                {
+                    // Fallback to direct instantiation if no sync component found
+                    HatchEggDirect(eggItem, ownerPlayerId);
+                }
+            }
+            else
+            {
+                // Client-side: request hatch from server
+                var hatchingSync = FindObjectOfType<SlimeHatchingSync>();
+                if (hatchingSync != null)
+                {
+                    hatchingSync.HatchEggServerRpc(eggItem.transform.position, (int)eggItem.EggType, ownerPlayerId);
+                }
+            }
+
+            // Destroy the egg
+            UnityEngine.Object.Destroy(eggItem.gameObject);
+        }
+
+        private static void HatchEggDirect(SlimeEggItem eggItem, int ownerPlayerId)
+        {
             // Get the slime enemy prefab from LethalLib registration
             var slimeEnemyType = Enemies.GetEnemyType("Slime");
             if (slimeEnemyType == null || slimeEnemyType.enemyPrefab == null)
@@ -84,6 +116,7 @@ namespace GoodForBusiness.Patches
             }
 
             slimeAI.SlimeType = eggItem.EggType;
+            slimeAI.OwnerPlayerId = ownerPlayerId;
             slimeAI.InitializeVariant();
 
             // Register with SlimeManager
@@ -95,9 +128,6 @@ namespace GoodForBusiness.Patches
             {
                 networkObj.Spawn();
             }
-
-            // Destroy the egg
-            UnityEngine.Object.Destroy(eggItem.gameObject);
         }
     }
 }
