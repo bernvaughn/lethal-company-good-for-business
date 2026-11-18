@@ -289,6 +289,7 @@ namespace GoodForBusiness.Networking
             if (beehiveItem != null)
             {
                 beehiveItem.CreditValue = creditValue;
+                beehiveItem.itemValue = creditValue;
             }
 
             var networkObj = itemObj.GetComponent<NetworkObject>();
