@@ -105,7 +105,16 @@ namespace GoodForBusiness.Slimes
             if (selectedItem == null || selectedItem.spawnPrefab == null)
                 return;
 
+            // Spawn at ship/player position (first player's position as ship reference)
             Vector3 spawnPos = slime.transform.position;
+            if (StartOfRound.Instance.allPlayerScripts != null && StartOfRound.Instance.allPlayerScripts.Length > 0)
+            {
+                var player = StartOfRound.Instance.allPlayerScripts[0];
+                if (player != null)
+                {
+                    spawnPos = player.transform.position;
+                }
+            }
             _slimeAI.SpawnItemAt(selectedItem.name, spawnPos);
         }
 
