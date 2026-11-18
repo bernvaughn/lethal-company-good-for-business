@@ -1,0 +1,19 @@
+{
+  "name": "GoodForBusiness.Editor",
+  "rootNamespace": "GoodForBusiness.Editor",
+  "references": [
+    "GoodForBusiness.Runtime",
+    "UnityEditor.CoreModule",
+    "UnityEditor.AssetBundleBrowser",
+    "UnityEngine.CoreModule"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": []
+}

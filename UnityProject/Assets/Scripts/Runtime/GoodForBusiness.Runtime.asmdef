@@ -1,0 +1,21 @@
+{
+  "name": "GoodForBusiness.Runtime",
+  "rootNamespace": "GoodForBusiness",
+  "references": [
+    "UnityEngine.CoreModule",
+    "UnityEngine.AnimationModule",
+    "UnityEngine.AudioModule",
+    "UnityEngine.PhysicsModule",
+    "UnityEngine.UIModule",
+    "Unity.Netcode.Runtime",
+    "BepInEx",
+    "LethalLib"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": true,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": []
+}

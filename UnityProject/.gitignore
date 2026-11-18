@@ -1,0 +1,73 @@
+# Unity generated folders
+[Ll]ibrary/
+[Oo]bj/
+[Tt]emp/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Uu]ser[Ss]ettings/
+
+# MemoryCaptures can get excessive in size.
+[Mm]emoryCaptures/
+
+# AssetBundles
+AssetBundles/
+
+# Recordings
+Recordings/
+
+# Editor generated
+*.pidb.meta
+*.pdb.meta
+*.mdb.meta
+
+# Build output
+*.apk
+*.unitypackage
+*.app
+*.exe
+
+# Crashlytics
+crashlytics-build.properties
+
+# Packed Addressables
+[AA]ddressables[Aa]ssetsData/*
+!*[AA]ddressables[Aa]ssetsData/bin/Data/build_info.json
+
+# Temporary auto-generated Android Assets
+[AA]ssets/StreamingAssets/aa.meta
+[AA]ssets/StreamingAssets/aa/*
+
+# Visual Studio
+.vs/
+*.userprefs
+*.csproj
+*.sln
+*.sln.docstates
+*.suo
+*.user
+*.unityproj
+
+# Rider
+.idea/
+*.sln.iml
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# UnityPackageManager
+Packages/
+!Packages/manifest.json
+!Packages/packages-lock.json
+
+# JetBrains Rider
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# GoodForBusiness specific
+Build/
+Assets/StreamingAssets/
