@@ -292,7 +292,7 @@ namespace GoodForBusiness.Networking
             }
 
             var networkObj = itemObj.GetComponent<NetworkObject>();
-            if (networkObj != null && NetworkManager.Singleton != null && NetworkManager.Singleton.IsHost)
+            if (networkObj != null && NetworkManager.Singleton != null && NetworkManager.Singleton.IsServer)
             {
                 networkObj.Spawn();
             }

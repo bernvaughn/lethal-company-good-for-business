@@ -188,6 +188,15 @@ namespace UnityEngine
 
     public class SkinnedMeshRenderer : MeshRenderer { }
 
+    public class AudioSource : Component
+    {
+        public void PlayOneShot(AudioClip? clip) { }
+        public AudioClip? clip { get; set; }
+        public bool isPlaying { get; set; }
+        public void Play() { }
+        public void Stop() { }
+    }
+
     public class ScriptableObject : Object
     {
         public static T CreateInstance<T>() where T : ScriptableObject => default!;
@@ -202,5 +211,36 @@ namespace UnityEngine
         protected virtual void OnDestroy() { }
         protected virtual void OnEnable() { }
         protected virtual void OnDisable() { }
+    }
+
+    namespace AI
+    {
+        public class NavMeshAgent : Component
+        {
+            public float speed { get; set; }
+            public float acceleration { get; set; }
+            public float stoppingDistance { get; set; }
+            public bool autoBraking { get; set; }
+            public bool hasPath { get; set; }
+            public bool pathPending { get; set; }
+            public Vector3 velocity { get; set; }
+            public void SetDestination(Vector3 target) { }
+            public void ResetPath() { }
+        }
+
+        public struct NavMeshHit
+        {
+            public Vector3 position;
+        }
+
+        public static class NavMesh
+        {
+            public static int AllAreas => -1;
+            public static bool SamplePosition(Vector3 source, out NavMeshHit hit, float distance, int areaMask)
+            {
+                hit = default;
+                return false;
+            }
+        }
     }
 }
