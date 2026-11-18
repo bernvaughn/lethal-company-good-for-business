@@ -31,8 +31,10 @@ dotnet build GoodForBusiness.csproj --configuration Release
 ```
 src/          - Mod source code
 Tests/        - Unit tests
-Thunderstore/ - Thunderstore packaging config
 .github/      - CI/CD workflows
+
+Thunderstore package files live at the repository root: `manifest.json`,
+`icon.png` (256x256), `README.md` and `thunderstore.toml`.
 ```
 
 ## Compatibility
