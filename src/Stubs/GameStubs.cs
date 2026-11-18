@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using System.Collections.Generic;
 
 namespace GoodForBusiness.Stubs.Game
 {
@@ -26,16 +27,36 @@ namespace GoodForBusiness.Stubs.Game
         public virtual void OnDrop() { }
     }
 
-    public class EnemyAI : UnityEngine.MonoBehaviour
+    public class NetworkBehaviour : UnityEngine.MonoBehaviour
+    {
+        public bool IsServer { get; set; } = true;
+        public bool IsClient { get; set; } = true;
+        public bool IsHost { get; set; } = true;
+        public bool IsOwner { get; set; } = true;
+        public NetworkObject? NetworkObject { get; set; }
+    }
+
+    public class EnemyAI : NetworkBehaviour
     {
         public bool isEnemy;
+        public bool isEnemyDead;
+        public NavMeshAgent agent;
+        public Animator animator;
+        public AudioSource creatureVoice;
+        public AudioSource creatureSFX;
+        public EnemyType enemyType;
         public Vector3 transformPosition => transform.position;
+
+        public virtual void Start() { }
+        public virtual void Update() { }
+        public virtual void DoAIInterval() { }
     }
 
     public class NetworkObject : UnityEngine.MonoBehaviour
     {
         public ulong NetworkObjectId { get; set; }
         public bool IsSpawned { get; set; }
+        public bool IsOwner { get; set; }
         public void Spawn() { }
         public void Despawn() { }
     }
@@ -52,11 +73,26 @@ namespace GoodForBusiness.Stubs.Game
     {
         public static NetworkManager? Singleton { get; private set; } = new NetworkManager();
         public bool IsHost = true;
+        public bool IsServer = true;
+        public bool IsClient = true;
         public static NetworkObject? SpawnObject(GameObject prefab, Vector3 position, Quaternion rotation)
         {
             var obj = UnityEngine.Object.Instantiate(prefab);
             return obj.GetComponent<NetworkObject>();
         }
+    }
+
+    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
+    public class ServerRpcAttribute : Attribute
+    {
+        public bool RequireOwnership { get; set; } = true;
+        public ServerRpcAttribute() { }
+    }
+
+    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
+    public class ClientRpcAttribute : Attribute
+    {
+        public ClientRpcAttribute() { }
     }
 
     public class RoundManager : UnityEngine.MonoBehaviour
