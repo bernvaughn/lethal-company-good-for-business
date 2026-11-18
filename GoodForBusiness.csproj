@@ -21,16 +21,29 @@
     <Version>1.0.0</Version>
     <FileVersion>1.0.0</FileVersion>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <!-- Netcode Patcher configuration -->
+    <NetcodePatcherEnabled>true</NetcodePatcherEnabled>
+    <NetcodePatcherTargetPath>$(TargetPath)</NetcodePatcherTargetPath>
+    <NetcodePatcherOutputPath>$(TargetDir)$(AssemblyName).patched.dll</NetcodePatcherOutputPath>
+    <NetcodePatcherUnityVersion>2022.3.9f1</NetcodePatcherUnityVersion>
+    <NetcodePatcherNetcodeVersion>1.5.2</NetcodePatcherNetcodeVersion>
+    <NetcodePatcherGenerateStubs>true</NetcodePatcherGenerateStubs>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">
     <Optimize>true</Optimize>
     <DebugType>none</DebugType>
+    <DefineConstants>RELEASE</DefineConstants>
+    <!-- Netcode patcher runs in Release for distribution -->
+    <NetcodePatcherEnabled>true</NetcodePatcherEnabled>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
     <Optimize>false</Optimize>
     <DebugType>full</DebugType>
+    <DefineConstants>DEBUG</DefineConstants>
+    <!-- Disable netcode patcher in Debug for faster iteration -->
+    <NetcodePatcherEnabled>false</NetcodePatcherEnabled>
   </PropertyGroup>
 
   <ItemGroup>
@@ -40,6 +53,8 @@
       the game's managed assemblies and the BepInEx.Core NuGet package.
     -->
     <!-- <PackageReference Include="BepInEx.Core" Version="5.4.22" /> -->
+    <!-- Netcode Patcher MSBuild integration -->
+    <PackageReference Include="Evaisa.NetcodePatcher.MSBuild" Version="3.0.0" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>
@@ -50,6 +65,8 @@
   <ItemGroup>
     <None Include="manifest.json" CopyToOutputDirectory="PreserveNewest" />
     <None Include="Thunderstore/thunderstore.toml" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="README.md" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="icon.png" CopyToOutputDirectory="PreserveNewest" Condition="Exists('icon.png')" />
   </ItemGroup>
 
   <!-- Skip NuGet package resolution since we use local stubs only -->
@@ -57,5 +74,11 @@
   <Target Name="ResolvePackageDependencies" />
   <Target Name="ResolveNuGetPackageAssets" />
   <Target Name="Restore" />
+
+  <!-- Thunderstore packaging target -->
+  <Target Name="ThunderstorePackage" AfterTargets="Build" Condition="'$(Configuration)' == 'Release'">
+    <Exec Command="dotnet tool install --global tcli" ContinueOnError="true" />
+    <Exec Command="tcli build --project $(MSBuildProjectDirectory)" WorkingDirectory="$(MSBuildProjectDirectory)" />
+  </Target>
 
 </Project>
