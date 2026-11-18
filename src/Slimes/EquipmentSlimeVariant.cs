@@ -1,5 +1,6 @@
 using GoodForBusiness.Core;
 using GoodForBusiness.Configuration;
+using GoodForBusiness.Items;
 using GoodForBusiness.Slimes.Variants;
 using GoodForBusiness.Stubs.Game;
 using LethalLib.Modules;
@@ -119,7 +120,54 @@ namespace GoodForBusiness.Slimes
                     spawnPos = player.transform.position;
                 }
             }
-            _slimeAI.SpawnItemAt(selectedItem.name, spawnPos);
+
+            // Spawn an Equipment Crate containing the selected item (visual feedback + auto-pickup option)
+            SpawnEquipmentCrate(selectedItem, spawnPos);
+        }
+
+        /// <summary>
+        /// Spawns an Equipment Crate at the given position containing the specified item.
+        /// The crate provides visual feedback (particle effect) and supports auto-pickup
+        /// or ground spawn based on configuration.
+        /// </summary>
+        private void SpawnEquipmentCrate(Item item, Vector3 position)
+        {
+            if (_config == null || _slimeAI == null)
+                return;
+
+            // Find the Equipment Crate prefab from registered items
+            var crateItem = LethalLib.Modules.Items.FindItemByName("EquipmentCrate");
+            if (crateItem == null || crateItem.spawnPrefab == null)
+            {
+                UnityEngine.Debug.LogWarning("[GoodForBusiness] Equipment Crate item not registered. Falling back to direct item spawn.");
+                _slimeAI.SpawnItemAt(item.name, position);
+                return;
+            }
+
+            // Instantiate the crate prefab
+            var crateObj = UnityEngine.Object.Instantiate(crateItem.spawnPrefab, position, UnityEngine.Quaternion.identity);
+            var crateComponent = crateObj.GetComponent<EquipmentCrateItem>();
+            if (crateComponent == null)
+            {
+                crateComponent = crateObj.AddComponent<EquipmentCrateItem>();
+            }
+
+            // Configure the crate
+            crateComponent.ContainedItem = item;
+            crateComponent.AutoPickup = _config.EquipmentCrateAutoPickup.Value;
+            crateComponent.PlaySpawnEffect = _config.EquipmentCrateVisualFeedback.Value;
+            crateComponent.CreditValue = item.creditsWorth;
+            crateComponent.itemValue = item.creditsWorth;
+
+            // Initialize the crate (runs Awake logic and spawn effects)
+            crateComponent.OnSpawn();
+
+            // Network spawn the crate if host
+            var networkObj = crateObj.GetComponent<NetworkObject>();
+            if (networkObj != null && NetworkManager.Singleton != null && NetworkManager.Singleton.IsServer)
+            {
+                networkObj.Spawn();
+            }
         }
 
         public string GetDisplayName() => "Equipment Slime";
