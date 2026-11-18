@@ -1,5 +1,6 @@
 using GoodForBusiness.Core;
 using GoodForBusiness.Configuration;
+using GoodForBusiness.Slimes;
 using GoodForBusiness.Stubs.Game;
 using LethalLib.Modules;
 using System.Collections.Generic;
@@ -14,6 +15,7 @@ namespace GoodForBusiness.Slimes
 
         private PluginConfig? _config;
         private List<(Item item, int weight)> _dropTable = new();
+        private SlimeAI? _slimeAI;
 
         public override int GrowthCost
         {
@@ -23,6 +25,7 @@ namespace GoodForBusiness.Slimes
         private void Awake()
         {
             _config = GoodForBusinessPlugin.Instance?.Config;
+            _slimeAI = GetComponent<SlimeAI>();
             ParseDropTable();
         }
 
@@ -78,7 +81,7 @@ namespace GoodForBusiness.Slimes
 
         public override void ExecuteDailyAbility()
         {
-            if (_dropTable.Count == 0 || StartOfRound.Instance == null)
+            if (_dropTable.Count == 0 || StartOfRound.Instance == null || _slimeAI == null)
                 return;
 
             int totalWeight = 0;
@@ -101,13 +104,7 @@ namespace GoodForBusiness.Slimes
                 return;
 
             Vector3 spawnPos = StartOfRound.Instance.allPlayerScripts?[0]?.transform.position ?? Vector3.zero;
-            var crateObj = UnityEngine.Object.Instantiate(selectedItem.spawnPrefab, spawnPos, Quaternion.identity);
-
-            var networkObj = crateObj.GetComponent<NetworkObject>();
-            if (networkObj != null && NetworkManager.Singleton != null && NetworkManager.Singleton.IsHost)
-            {
-                networkObj.Spawn();
-            }
+            _slimeAI.SpawnItemAt(selectedItem.name, spawnPos);
         }
 
         public override string GetDisplayName() => "Equipment Slime";

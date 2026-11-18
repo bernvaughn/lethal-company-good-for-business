@@ -1,5 +1,6 @@
 using GoodForBusiness.Core;
 using GoodForBusiness.Configuration;
+using GoodForBusiness.Networking;
 using GoodForBusiness.Stubs.Game;
 using System.Collections;
 using UnityEngine;
@@ -38,6 +39,14 @@ namespace GoodForBusiness.Slimes
         public NetworkVariable<bool> SyncIsGrown = new NetworkVariable<bool>(false);
         public NetworkVariable<int> SyncOwnerPlayerId = new NetworkVariable<int>(-1);
 
+        [Header("Networking Components")]
+        [SerializeField] private SlimeNetworkTransform? _networkTransform;
+        [SerializeField] private SlimeFeedingSync? _feedingSync;
+        [SerializeField] private SlimeAbilitySync? _abilitySync;
+        [SerializeField] private SlimeStateSync? _stateSync;
+        [SerializeField] private SlimeHatchingSync? _hatchingSync;
+        [SerializeField] private SlimeItemSpawnSync? _itemSpawnSync;
+
         [Header("State")]
         public SlimeState CurrentState
         {
@@ -62,6 +71,10 @@ namespace GoodForBusiness.Slimes
             get => SyncOwnerPlayerId.Value;
             set => SyncOwnerPlayerId.Value = value;
         }
+
+        public SlimeVariantBase? Variant => _variant;
+
+        public ulong NetworkObjectId => NetworkObject?.NetworkObjectId ?? 0;
 
         [Header("References")]
         [SerializeField] private NavMeshAgent _agent;
@@ -133,6 +146,31 @@ namespace GoodForBusiness.Slimes
             _agent.acceleration = 8f;
             _agent.stoppingDistance = _followDistance;
             _agent.autoBraking = true;
+
+            // Initialize networking components
+            _networkTransform = GetComponent<SlimeNetworkTransform>();
+            if (_networkTransform == null)
+                _networkTransform = gameObject.AddComponent<SlimeNetworkTransform>();
+
+            _feedingSync = GetComponent<SlimeFeedingSync>();
+            if (_feedingSync == null)
+                _feedingSync = gameObject.AddComponent<SlimeFeedingSync>();
+
+            _abilitySync = GetComponent<SlimeAbilitySync>();
+            if (_abilitySync == null)
+                _abilitySync = gameObject.AddComponent<SlimeAbilitySync>();
+
+            _stateSync = GetComponent<SlimeStateSync>();
+            if (_stateSync == null)
+                _stateSync = gameObject.AddComponent<SlimeStateSync>();
+
+            _hatchingSync = GetComponent<SlimeHatchingSync>();
+            if (_hatchingSync == null)
+                _hatchingSync = gameObject.AddComponent<SlimeHatchingSync>();
+
+            _itemSpawnSync = GetComponent<SlimeItemSpawnSync>();
+            if (_itemSpawnSync == null)
+                _itemSpawnSync = gameObject.AddComponent<SlimeItemSpawnSync>();
         }
 
         private void InitializeVariant()
@@ -400,11 +438,23 @@ namespace GoodForBusiness.Slimes
             return nearestPlayer;
         }
 
-        public void OnFedScrap(int scrapValue)
+        /// <summary>
+        /// Called when a player feeds scrap to this slime.
+        /// Uses ServerRpc to ensure proper network synchronization.
+        /// </summary>
+        public void OnFedScrap(int scrapValue, int playerId = -1)
         {
             if (IsGrown)
                 return;
 
+            // If called on client, forward to server
+            if (!IsServer && NetworkObject != null)
+            {
+                _feedingSync?.FeedSlimeServerRpc(NetworkObjectId, scrapValue, playerId);
+                return;
+            }
+
+            // Server-side logic
             _variant?.OnFedScrap(scrapValue);
 
             float previousProgress = GrowthProgress;
@@ -423,14 +473,31 @@ namespace GoodForBusiness.Slimes
                 PlayEatEffects();
             }
 
+            if (playerId >= 0)
+                OwnerPlayerId = playerId;
+
+            // Sync growth progress to all clients
             SyncGrowthServerRpc(GrowthProgress);
+            _stateSync?.SyncGrowthProgressClientRpc(NetworkObjectId, GrowthProgress, IsGrown);
         }
 
+        /// <summary>
+        /// Triggers this slime's daily ability.
+        /// Uses ServerRpc to ensure proper network synchronization.
+        /// </summary>
         public void ExecuteDailyAbility()
         {
-            if (!IsGrown || !IsServer)
+            if (!IsGrown)
                 return;
 
+            // If called on client, forward to server
+            if (!IsServer && NetworkObject != null)
+            {
+                _abilitySync?.TriggerAbilityServerRpc(NetworkObjectId);
+                return;
+            }
+
+            // Server-side logic
             _variant?.ExecuteDailyAbility();
             SetStateServerRpc(SlimeState.AbilityActive);
             PlayAbilityEffects();
@@ -483,6 +550,7 @@ namespace GoodForBusiness.Slimes
         private void SetStateServerRpc(SlimeState state)
         {
             CurrentState = state;
+            _stateSync?.SyncStateClientRpc(NetworkObjectId, (int)state);
         }
 
         [ServerRpc(RequireOwnership = false)]
@@ -513,6 +581,18 @@ namespace GoodForBusiness.Slimes
             {
                 _animator.SetTrigger(trigger);
             }
+        }
+
+        /// <summary>
+        /// Spawns an item (equipment crate or slimed beehive) at the specified position.
+        /// Called by slime variants when executing their daily ability.
+        /// </summary>
+        public void SpawnItemAt(string itemName, Vector3 position, int creditValue = 0)
+        {
+            if (!IsServer)
+                return;
+
+            _itemSpawnSync?.SpawnItemServerRpc(itemName, position, Quaternion.identity, creditValue);
         }
 
         public override void OnDestroy()
