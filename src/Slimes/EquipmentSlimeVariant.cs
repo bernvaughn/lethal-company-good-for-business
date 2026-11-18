@@ -1,5 +1,6 @@
 using GoodForBusiness.Core;
 using GoodForBusiness.Configuration;
+using GoodForBusiness.Slimes.Variants;
 using GoodForBusiness.Stubs.Game;
 using LethalLib.Modules;
 using System.Collections.Generic;
@@ -24,6 +25,8 @@ namespace GoodForBusiness.Slimes
         {
             _config = GoodForBusinessPlugin.Instance?.Config;
             ParseDropTable();
+            // Register this variant
+            SlimeVariantRegistry.Register(this);
         }
 
         private void ParseDropTable()
@@ -76,7 +79,7 @@ namespace GoodForBusiness.Slimes
             // Growth handled by base class
         }
 
-        public override void ExecuteDailyAbility()
+        public override void ExecuteDailyAbility(SlimeAI slime)
         {
             if (_dropTable.Count == 0 || StartOfRound.Instance == null)
                 return;
@@ -100,7 +103,7 @@ namespace GoodForBusiness.Slimes
             if (selectedItem == null || selectedItem.spawnPrefab == null)
                 return;
 
-            Vector3 spawnPos = StartOfRound.Instance.allPlayerScripts?[0]?.transform.position ?? Vector3.zero;
+            Vector3 spawnPos = slime.transform.position;
             var crateObj = UnityEngine.Object.Instantiate(selectedItem.spawnPrefab, spawnPos, Quaternion.identity);
 
             var networkObj = crateObj.GetComponent<NetworkObject>();

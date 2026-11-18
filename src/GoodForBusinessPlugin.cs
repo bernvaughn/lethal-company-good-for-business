@@ -8,6 +8,7 @@ using GoodForBusiness.Configuration;
 using GoodForBusiness.Core;
 using GoodForBusiness.Patches;
 using GoodForBusiness.Egg;
+using GoodForBusiness.Slimes.Variants;
 using LethalLib.Modules;
 
 namespace GoodForBusiness
@@ -38,6 +39,9 @@ namespace GoodForBusiness
             // Load asset bundle
             LoadAssetBundle();
 
+            // Initialize slime visuals with base material from asset bundle
+            InitializeSlimeVisuals();
+
             // Register with LethalLib (requires asset bundle)
             if (AssetBundle != null && Config != null)
             {
@@ -50,6 +54,30 @@ namespace GoodForBusiness
 
             // Initialize egg spawner
             InitializeEggSpawner();
+        }
+
+        private void InitializeSlimeVisuals()
+        {
+            if (AssetBundle == null) return;
+
+            try
+            {
+                // Try to load base slime material from asset bundle
+                var baseMaterial = AssetBundle.LoadAsset<Material>("Assets/Materials/Slime_Base.mat");
+                if (baseMaterial != null)
+                {
+                    SlimeVisuals.Initialize(baseMaterial);
+                    Logger.LogInfo("[GoodForBusiness] Slime visuals initialized with base material.");
+                }
+                else
+                {
+                    Logger.LogWarning("[GoodForBusiness] Base slime material not found in asset bundle.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError($"[GoodForBusiness] Failed to initialize slime visuals: {ex.Message}");
+            }
         }
 
         public new void Start()
