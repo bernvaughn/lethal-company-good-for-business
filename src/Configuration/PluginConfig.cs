@@ -26,6 +26,10 @@ namespace GoodForBusiness.Configuration
         public ConfigEntry<int> EquipmentSlimeGrowthCost { get; }
         public ConfigEntry<string> EquipmentDropTable { get; }
 
+        // Equipment crate
+        public ConfigEntry<bool> EquipmentCrateAutoPickup { get; }
+        public ConfigEntry<bool> EquipmentCrateVisualFeedback { get; }
+
         // Bee lover slime
         public ConfigEntry<bool> EnableBeeLoverSlime { get; }
         public ConfigEntry<int> BeeLoverSlimeGrowthCost { get; }
@@ -61,6 +65,10 @@ namespace GoodForBusiness.Configuration
             EnableEquipmentSlime = config.Bind("Equipment Slime", "Enable", true, "Enable the blue equipment slime variant.");
             EquipmentSlimeGrowthCost = config.Bind("Equipment Slime", "GrowthCost", 300, "Scrap value required to grow the equipment slime.");
             EquipmentDropTable = config.Bind("Equipment Slime", "DropTable", "[{\"item\":\"Flashlight\",\"weight\":10},{\"item\":\"Shovel\",\"weight\":10},{\"item\":\"StunGrenade\",\"weight\":5},{\"item\":\"ProbeScanner\",\"weight\":5}]", "JSON array of equipment items and weights for daily drops.");
+
+            // Equipment crate
+            EquipmentCrateAutoPickup = config.Bind("Equipment Crate", "AutoPickup", false, "When true, equipment crates automatically transfer their contents to the nearest player on spawn. When false, crates stay on the ground for manual pickup.");
+            EquipmentCrateVisualFeedback = config.Bind("Equipment Crate", "VisualFeedback", true, "When true, equipment crates play a particle effect on spawn for visual feedback.");
 
             // Bee lover slime
             EnableBeeLoverSlime = config.Bind("Bee Lover Slime", "Enable", true, "Enable the yellow/black bee lover slime variant.");
