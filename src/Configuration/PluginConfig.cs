@@ -35,6 +35,9 @@ namespace GoodForBusiness.Configuration
         public ConfigEntry<int> BeeLoverSlimeGrowthCost { get; }
         public ConfigEntry<int> SlimedBeehiveValue { get; }
         public ConfigEntry<float> BeeDetectionRange { get; }
+        public ConfigEntry<float> BeeLoverSlimeAttackRange { get; }
+        public ConfigEntry<float> BeeLoverSlimePathfindingTimeout { get; }
+        public ConfigEntry<bool> BeeLoverSlimeTeleportFallbackEnabled { get; }
 
         // Visuals
         public ConfigEntry<bool> SlimesFacePlayers { get; }
@@ -75,6 +78,9 @@ namespace GoodForBusiness.Configuration
             BeeLoverSlimeGrowthCost = config.Bind("Bee Lover Slime", "GrowthCost", 400, "Scrap value required to grow the bee lover slime.");
             SlimedBeehiveValue = config.Bind("Bee Lover Slime", "SlimedBeehiveValue", 175, "Credit value of a Slimed Beehive scrap item.");
             BeeDetectionRange = config.Bind("Bee Lover Slime", "BeeDetectionRange", 30f, "Maximum distance to detect beehives.");
+            BeeLoverSlimeAttackRange = config.Bind("Bee Lover Slime", "AttackRange", 2f, "Distance to get to a beehive before attacking it.");
+            BeeLoverSlimePathfindingTimeout = config.Bind("Bee Lover Slime", "PathfindingTimeout", 10f, "Seconds to attempt pathfinding before falling back to teleport.");
+            BeeLoverSlimeTeleportFallbackEnabled = config.Bind("Bee Lover Slime", "TeleportFallbackEnabled", true, "When true, teleport to the beehive if pathfinding fails.");
 
             // Visuals
             SlimesFacePlayers = config.Bind("Visuals", "SlimesFacePlayers", true, "Slimes will face the nearest player.");
