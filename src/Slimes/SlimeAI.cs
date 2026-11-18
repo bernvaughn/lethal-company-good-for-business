@@ -1,6 +1,7 @@
 using GoodForBusiness.Core;
 using GoodForBusiness.Configuration;
 using GoodForBusiness.Networking;
+using GoodForBusiness.Slimes.Variants;
 using GoodForBusiness.Stubs.Game;
 using System.Collections;
 using UnityEngine;
@@ -15,17 +16,6 @@ namespace GoodForBusiness.Slimes
         Eating,
         Growing,
         AbilityActive
-    }
-
-    public abstract class SlimeVariantBase : MonoBehaviour
-    {
-        public abstract SlimeType Type { get; }
-        public abstract int GrowthCost { get; }
-        public abstract Color SlimeColor { get; }
-        public abstract void OnFedScrap(int scrapValue);
-        public abstract void ExecuteDailyAbility();
-        public abstract string GetDisplayName();
-        public abstract string GetDescription();
     }
 
     public class SlimeAI : EnemyAI
@@ -72,7 +62,7 @@ namespace GoodForBusiness.Slimes
             set => SyncOwnerPlayerId.Value = value;
         }
 
-        public SlimeVariantBase? Variant => _variant;
+        public ISlimeVariant? Variant => _variant;
 
         public ulong NetworkObjectId => NetworkObject?.NetworkObjectId ?? 0;
 
@@ -98,7 +88,7 @@ namespace GoodForBusiness.Slimes
         [SerializeField] private float _baseBobAmount = 0.5f;
         [SerializeField] private float _bobSpeed = 1.5f;
 
-        private SlimeVariantBase? _variant;
+        private ISlimeVariant? _variant;
         private PluginConfig? _config;
         private Coroutine? _stateCoroutine;
         private Coroutine? _bobCoroutine;
@@ -120,6 +110,9 @@ namespace GoodForBusiness.Slimes
                 _stateCoroutine = StartCoroutine(StateMachineRoutine());
                 _bobCoroutine = StartCoroutine(BobRoutine());
             }
+
+            // Apply visuals after variant is initialized
+            SlimeVisuals.ApplyVariantVisuals(this);
 
             _isInitialized = true;
         }
@@ -177,25 +170,20 @@ namespace GoodForBusiness.Slimes
         {
             _config = GoodForBusinessPlugin.Instance?.Config;
 
-            switch (SlimeType)
+            // Add the appropriate variant component based on slime type
+            if (SlimeType != SlimeType.None)
             {
-                case SlimeType.Equipment:
-                    _variant = gameObject.AddComponent<EquipmentSlimeVariant>();
-                    break;
-                case SlimeType.BeeLover:
-                    _variant = gameObject.AddComponent<BeeLoverSlimeVariant>();
-                    break;
-                default:
-                    UnityEngine.Debug.LogWarning($"[GoodForBusiness] Unknown slime type: {SlimeType}");
-                    break;
-            }
-
-            if (_variant != null)
-            {
-                var renderer = GetComponentInChildren<Renderer>();
-                if (renderer != null)
+                switch (SlimeType)
                 {
-                    renderer.material.color = _variant.SlimeColor;
+                    case SlimeType.Equipment:
+                        _variant = gameObject.AddComponent<EquipmentSlimeVariant>();
+                        break;
+                    case SlimeType.BeeLover:
+                        _variant = gameObject.AddComponent<BeeLoverSlimeVariant>();
+                        break;
+                    default:
+                        UnityEngine.Debug.LogWarning($"[GoodForBusiness] Unknown slime type: {SlimeType}");
+                        break;
                 }
             }
 
@@ -261,48 +249,24 @@ namespace GoodForBusiness.Slimes
         {
             while (true)
             {
-                if (!IsServer)
-                {
-                    yield return new WaitForFixedUpdate();
-                    continue;
-                }
-
-                float bobAmount = _config?.SlimeBobAmount.Value ?? _baseBobAmount;
-                if (bobAmount > 0f)
-                {
-                    _bobPhase += Time.fixedDeltaTime * _bobSpeed;
-                    float offset = Mathf.Sin(_bobPhase) * bobAmount * 0.1f;
-                    Vector3 pos = transform.position;
-                    pos.y = _basePosition.y + offset;
-                    transform.position = pos;
-                    // Position synced via NetworkTransform
-                }
-
-                yield return new WaitForFixedUpdate();
+                _bobPhase += Time.deltaTime * _bobSpeed;
+                float bobOffset = Mathf.Sin(_bobPhase) * _baseBobAmount * (IsGrown ? 0.3f : 1f);
+                transform.position = _basePosition + Vector3.up * bobOffset;
+                yield return null;
             }
         }
 
-        public override void Update()
+        private void LateUpdate()
         {
-            base.Update();
-
-            if (!_isInitialized)
+            if (!IsSpawned || !IsServer)
                 return;
 
-            var slimesFacePlayers = _config?.SlimesFacePlayers.Value ?? true;
-            if (slimesFacePlayers && CurrentState != SlimeState.Eating && CurrentState != SlimeState.Growing && CurrentState != SlimeState.AbilityActive)
+            UpdateAnimations();
+
+            if (PluginConfig.Instance?.SlimesFacePlayers.Value == true)
             {
                 FaceNearestPlayer();
             }
-
-            UpdateMovement();
-            UpdateAnimations();
-        }
-
-        private void UpdateMovement()
-        {
-            if (!IsServer)
-                return;
 
             switch (CurrentState)
             {
@@ -498,7 +462,7 @@ namespace GoodForBusiness.Slimes
             }
 
             // Server-side logic
-            _variant?.ExecuteDailyAbility();
+            _variant?.ExecuteDailyAbility(this);
             SetStateServerRpc(SlimeState.AbilityActive);
             PlayAbilityEffects();
 

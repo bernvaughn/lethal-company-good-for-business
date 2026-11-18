@@ -1,22 +1,23 @@
 using GoodForBusiness.Core;
 using GoodForBusiness.Configuration;
 using GoodForBusiness.Items;
-using GoodForBusiness.Slimes;
+using GoodForBusiness.Slimes.Variants;
 using GoodForBusiness.Stubs.Game;
 using LethalLib.Modules;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace GoodForBusiness.Slimes
 {
-    public class BeeLoverSlimeVariant : SlimeVariantBase
+    public class BeeLoverSlimeVariant : MonoBehaviour, ISlimeVariant
     {
-        public override SlimeType Type => SlimeType.BeeLover;
-        public override Color SlimeColor => new Color(1f, 0.8f, 0f);
+        public SlimeType Type => SlimeType.BeeLover;
+        public Color SlimeColor => new Color(1f, 0.8f, 0f);
 
         private PluginConfig? _config;
         private SlimeAI? _slimeAI;
 
-        public override int GrowthCost
+        public int GrowthCost
         {
             get => _config?.BeeLoverSlimeGrowthCost.Value ?? 400;
         }
@@ -25,14 +26,16 @@ namespace GoodForBusiness.Slimes
         {
             _config = GoodForBusinessPlugin.Instance?.Config;
             _slimeAI = GetComponent<SlimeAI>();
+            // Register this variant
+            SlimeVariantRegistry.Register(this);
         }
 
-        public override void OnFedScrap(int scrapValue)
+        public void OnFedScrap(int scrapValue)
         {
             // Growth handled by base class
         }
 
-        public override void ExecuteDailyAbility()
+        public void ExecuteDailyAbility(SlimeAI slime)
         {
             if (StartOfRound.Instance == null || _slimeAI == null)
                 return;
@@ -49,24 +52,24 @@ namespace GoodForBusiness.Slimes
 
         private EnemyAI? FindNearestBeehive(float range)
         {
-            if (StartOfRound.Instance == null)
+            if (StartOfRound.Instance?.allPlayerScripts == null)
                 return null;
 
-            // Find all enemies in the scene and look for beehives
-            var enemies = FindObjectsByType<EnemyAI>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
             EnemyAI? nearestHive = null;
-            float nearestDist = range;
+            float nearestDist = range * range;
 
-            foreach (var enemy in enemies)
+            // Find all beehive enemies in the scene
+            var allEnemies = UnityEngine.Object.FindObjectsByType<EnemyAI>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+            foreach (var enemy in allEnemies)
             {
                 if (enemy == null || enemy.enemyType == null)
                     continue;
 
-                // Check if this is a beehive (by name or type)
-                string enemyName = enemy.enemyType.name.ToLower();
-                if (enemyName.Contains("bee") || enemyName.Contains("hive"))
+                // Check if this is a beehive enemy
+                if (enemy.enemyType.enemyName.ToLower().Contains("bee") || 
+                    enemy.enemyType.enemyName.ToLower().Contains("hive"))
                 {
-                    float dist = Vector3.Distance(_slimeAI!.transform.position, enemy.transform.position);
+                    float dist = Vector3.SqrMagnitude(transform.position - enemy.transform.position);
                     if (dist < nearestDist)
                     {
                         nearestDist = dist;
@@ -78,7 +81,7 @@ namespace GoodForBusiness.Slimes
             return nearestHive;
         }
 
-        public override string GetDisplayName() => "Bee Lover Slime";
-        public override string GetDescription() => "A yellow and black slime that hunts beehives.";
+        public string GetDisplayName() => "Bee Lover Slime";
+        public string GetDescription() => "A yellow and black slime that hunts beehives.";
     }
 }
