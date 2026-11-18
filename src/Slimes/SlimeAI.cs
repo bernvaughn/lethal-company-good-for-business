@@ -98,6 +98,12 @@ namespace GoodForBusiness.Slimes
         private float _lastStateCheck;
         private bool _isInitialized;
 
+        /// <summary>
+        /// When true, the slime's daily ability variant controls movement directly
+        /// (e.g., pathfinding to a beehive). LateUpdate will not reset the path.
+        /// </summary>
+        public bool AbilityControlsMovement { get; set; }
+
         public override void Start()
         {
             base.Start();
@@ -278,8 +284,13 @@ namespace GoodForBusiness.Slimes
                     break;
                 case SlimeState.Eating:
                 case SlimeState.Growing:
-                case SlimeState.AbilityActive:
                     _agent.ResetPath();
+                    break;
+                case SlimeState.AbilityActive:
+                    if (!AbilityControlsMovement)
+                    {
+                        _agent.ResetPath();
+                    }
                     break;
             }
         }
