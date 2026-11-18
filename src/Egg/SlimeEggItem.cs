@@ -10,6 +10,11 @@ namespace GoodForBusiness.Egg
         public SlimeType EggType { get; set; } = SlimeType.None;
         public bool IsHatching { get; private set; } = false;
 
+        // LethalLib Item properties
+        public bool TwoHanded => false;
+        public float Weight => 0.5f;
+        public int CreditsWorth => 0;
+
         public void StartHatching()
         {
             IsHatching = true;
