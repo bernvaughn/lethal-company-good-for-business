@@ -114,6 +114,15 @@ namespace UnityEngine
         public Texture2D(int width, int height) { }
     }
 
+    public class AssetBundle : Object
+    {
+        public static AssetBundle? LoadFromFile(string path) => null;
+        public static AssetBundle? LoadFromMemory(byte[] binary) => null;
+        public T? LoadAsset<T>(string name) where T : Object => default!;
+        public T[] LoadAllAssets<T>() where T : Object => Array.Empty<T>();
+        public void Unload(bool unloadAllLoadedObjects) { }
+    }
+
     public class AudioClip : Object { }
 
     public class Animator : Component
