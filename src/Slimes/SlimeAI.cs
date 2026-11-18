@@ -1,5 +1,6 @@
 using GoodForBusiness.Core;
 using GoodForBusiness.Configuration;
+using GoodForBusiness.Stubs.Game;
 using UnityEngine;
 
 namespace GoodForBusiness.Slimes
@@ -29,7 +30,7 @@ namespace GoodForBusiness.Slimes
         public SlimeType SlimeType { get; set; } = SlimeType.None;
         public SlimeState CurrentState { get; private set; } = SlimeState.Idle;
         public float GrowthProgress { get; set; } = 0f;
-        public bool IsGrown { get; protected set; } = false;
+        public bool IsGrown { get; set; } = false;
         public int OwnerPlayerId { get; set; } = -1;
         public ulong NetworkObjectId { get; set; } = 0;
 

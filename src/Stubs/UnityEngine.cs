@@ -12,8 +12,8 @@ namespace UnityEngine
         public string? name { get; set; }
         public T GetComponent<T>() where T : Component => default!;
         public T AddComponent<T>() where T : Component => default!;
-        public void Destroy(Object? obj) { }
-        public void Destroy(Object? obj, float t) { }
+        public static void Destroy(Object? obj) { }
+        public static void Destroy(Object? obj, float t) { }
         public static Object? FindObjectOfType<T>() where T : Object => null;
         public static T[] FindObjectsOfType<T>() where T : Object => Array.Empty<T>();
         public static void DontDestroyOnLoad(Object? obj) { }
@@ -21,10 +21,38 @@ namespace UnityEngine
         public static T Instantiate<T>(T original, UnityEngine.Vector3 position, UnityEngine.Quaternion rotation) where T : Object => default!;
     }
 
+    public static class Debug
+    {
+        public static void Log(object? message) { }
+        public static void LogWarning(object? message) { }
+        public static void LogError(object? message) { }
+        public static void LogFormat(string format, params object?[] args) { }
+    }
+
+    public static class Mathf
+    {
+        public static float Clamp01(float value) => value < 0 ? 0 : (value > 1 ? 1 : value);
+        public static float Max(float a, float b) => a > b ? a : b;
+        public static float Min(float a, float b) => a < b ? a : b;
+    }
+
+    public static class Random
+    {
+        public static float value => 0.5f;
+        public static float Range(float min, float max) => min;
+        public static int Range(int min, int max) => min;
+    }
+
     public class Component : Object
     {
         public Transform transform => default!;
         public GameObject gameObject => default!;
+        public T GetComponentInChildren<T>() where T : Component => default!;
+    }
+
+    public class Renderer : Component
+    {
+        public Material material => default!;
     }
 
     public class GameObject : Object
@@ -56,10 +84,15 @@ namespace UnityEngine
         public Vector3(float x, float y, float z) { this.x = x; this.y = y; this.z = z; }
         public static Vector3 zero => new Vector3(0, 0, 0);
         public static Vector3 one => new Vector3(1, 1, 1);
+        public static float Distance(Vector3 a, Vector3 b) => new Vector3(a.x - b.x, a.y - b.y, a.z - b.z).magnitude;
         public static Vector3 operator +(Vector3 a, Vector3 b) => new Vector3(a.x + b.x, a.y + b.y, a.z + b.z);
         public static Vector3 operator -(Vector3 a, Vector3 b) => new Vector3(a.x - b.x, a.y - b.y, a.z - b.z);
         public static Vector3 operator *(Vector3 a, float d) => new Vector3(a.x * d, a.y * d, a.z * d);
         public static Vector3 operator /(Vector3 a, float d) => new Vector3(a.x / d, a.y / d, a.z / d);
+        public static bool operator ==(Vector3 a, Vector3 b) => a.x == b.x && a.y == b.y && a.z == b.z;
+        public static bool operator !=(Vector3 a, Vector3 b) => a.x != b.x || a.y != b.y || a.z != b.z;
+        public float magnitude => (float)System.Math.Sqrt(x * x + y * y + z * z);
+        public Vector3 normalized => magnitude > 0 ? this / magnitude : zero;
         public override string ToString() => $"({x}, {y}, {z})";
     }
 
@@ -70,6 +103,7 @@ namespace UnityEngine
         public static Quaternion identity => new Quaternion(0, 0, 0, 1);
         public static Quaternion operator *(Quaternion a, Quaternion b) => a;
         public static Vector3 operator *(Quaternion rotation, Vector3 point) => point;
+        public static Quaternion LookRotation(Vector3 forward) => identity;
         public override string ToString() => $"({x}, {y}, {z}, {w})";
     }
 
@@ -154,7 +188,10 @@ namespace UnityEngine
 
     public class SkinnedMeshRenderer : MeshRenderer { }
 
-    public class ScriptableObject : Object { }
+    public class ScriptableObject : Object
+    {
+        public static T CreateInstance<T>() where T : ScriptableObject => default!;
+    }
 
     public abstract class MonoBehaviour : Component
     {

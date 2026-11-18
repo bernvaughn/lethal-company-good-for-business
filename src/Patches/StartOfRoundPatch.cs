@@ -91,7 +91,7 @@ namespace GoodForBusiness.Patches
 
             // Network spawn if host
             var networkObj = slimeObj.GetComponent<NetworkObject>();
-            if (networkObj != null && Unity.Netcode.NetworkManager.Singleton != null && Unity.Netcode.NetworkManager.Singleton.IsHost)
+            if (networkObj != null && NetworkManager.Singleton != null && NetworkManager.Singleton.IsHost)
             {
                 networkObj.Spawn();
             }

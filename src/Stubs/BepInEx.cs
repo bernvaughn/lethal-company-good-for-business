@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using GoodForBusiness.Stubs.Game;
 
 namespace BepInEx
 {
@@ -19,10 +21,17 @@ namespace BepInEx
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
     public class BepInDependencyAttribute : Attribute
     {
+        public enum DependencyFlags
+        {
+            HardDependency = 0,
+            SoftDependency = 1
+        }
+
         public string GUID { get; }
         public string? Version { get; }
         public BepInDependencyAttribute(string guid) { GUID = guid; }
         public BepInDependencyAttribute(string guid, string? version) { GUID = guid; Version = version; }
+        public BepInDependencyAttribute(string guid, DependencyFlags flags) { GUID = guid; }
     }
 
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
@@ -114,15 +123,17 @@ namespace BepInEx.Configuration
 
 namespace LethalLib.Modules
 {
+    using System.Collections.Generic;
+
     public class ScrapItemRegistration
     {
         public Item Item { get; set; } = null!;
-        public System.Collections.Generic.Dictionary<GoodForBusiness.Stubs.Game.LevelTypes, int> Rarities { get; set; } = new();
+        public Dictionary<LevelTypes, int> Rarities { get; set; } = new();
     }
 
     public static class Items
     {
-        private static readonly System.Collections.Generic.List<Item> _registeredItems = new();
+        private static readonly List<Item> _registeredItems = new();
 
         public static void RegisterScrap(ScrapItemRegistration registration)
         {
@@ -137,7 +148,7 @@ namespace LethalLib.Modules
 
     public static class Enemies
     {
-        private static readonly System.Collections.Generic.List<EnemyType> _registeredEnemies = new();
+        private static readonly List<EnemyType> _registeredEnemies = new();
 
         public static void RegisterEnemy(EnemyType enemyType)
         {

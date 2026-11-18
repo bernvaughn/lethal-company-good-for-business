@@ -15,11 +15,6 @@ namespace GoodForBusiness.Stubs.Game
         public string subText = "";
     }
 
-    public class ScriptableObject : UnityEngine.Object
-    {
-        public string name { get; set; } = "";
-    }
-
     public class GrabbableObject : UnityEngine.MonoBehaviour
     {
         public int itemValue;
@@ -53,9 +48,9 @@ namespace GoodForBusiness.Stubs.Game
         public NetworkVariable(T value) { Value = value; }
     }
 
-    public static class NetworkManager
+    public class NetworkManager
     {
-        public static NetworkManager Singleton { get; private set; } = new NetworkManager();
+        public static NetworkManager? Singleton { get; private set; } = new NetworkManager();
         public bool IsHost = true;
         public static NetworkObject? SpawnObject(GameObject prefab, Vector3 position, Quaternion rotation)
         {

@@ -1,6 +1,5 @@
 using GoodForBusiness.Core;
 using GoodForBusiness.Configuration;
-using GoodForBusiness.Items;
 using GoodForBusiness.Stubs.Game;
 using LethalLib.Modules;
 using System.Collections.Generic;
@@ -35,8 +34,6 @@ namespace GoodForBusiness.Slimes
             try
             {
                 var json = _config.EquipmentDropTable.Value;
-                // Simple JSON parsing for array of {"item":"name","weight":N}
-                // In real implementation, use JsonUtility or Newtonsoft.Json
                 var entries = json.Trim('[', ']').Split('}');
                 foreach (var entry in entries)
                 {
@@ -45,7 +42,7 @@ namespace GoodForBusiness.Slimes
                     var weightStr = ExtractJsonValue(entry, "weight");
                     if (!string.IsNullOrEmpty(itemName) && int.TryParse(weightStr, out int weight))
                     {
-                        var item = Items.FindItemByName(itemName);
+                        var item = LethalLib.Modules.Items.FindItemByName(itemName);
                         if (item != null)
                         {
                             _dropTable.Add((item, weight));
@@ -55,11 +52,10 @@ namespace GoodForBusiness.Slimes
             }
             catch
             {
-                // Fallback to defaults
-                _dropTable.Add((Items.FindItemByName("Flashlight")!, 10));
-                _dropTable.Add((Items.FindItemByName("Shovel")!, 10));
-                _dropTable.Add((Items.FindItemByName("StunGrenade")!, 5));
-                _dropTable.Add((Items.FindItemByName("ProbeScanner")!, 5));
+                _dropTable.Add((LethalLib.Modules.Items.FindItemByName("Flashlight")!, 10));
+                _dropTable.Add((LethalLib.Modules.Items.FindItemByName("Shovel")!, 10));
+                _dropTable.Add((LethalLib.Modules.Items.FindItemByName("StunGrenade")!, 5));
+                _dropTable.Add((LethalLib.Modules.Items.FindItemByName("ProbeScanner")!, 5));
             }
         }
 
@@ -85,7 +81,6 @@ namespace GoodForBusiness.Slimes
             if (_dropTable.Count == 0 || StartOfRound.Instance == null)
                 return;
 
-            // Select random equipment based on weights
             int totalWeight = 0;
             foreach (var (_, weight) in _dropTable) totalWeight += weight;
             int roll = Random.Range(0, totalWeight);
@@ -105,13 +100,11 @@ namespace GoodForBusiness.Slimes
             if (selectedItem == null || selectedItem.spawnPrefab == null)
                 return;
 
-            // Spawn at ship position (first player's position as fallback)
             Vector3 spawnPos = StartOfRound.Instance.allPlayerScripts?[0]?.transform.position ?? Vector3.zero;
             var crateObj = UnityEngine.Object.Instantiate(selectedItem.spawnPrefab, spawnPos, Quaternion.identity);
-            
-            // Network spawn if host
+
             var networkObj = crateObj.GetComponent<NetworkObject>();
-            if (networkObj != null && Unity.Netcode.NetworkManager.Singleton != null && Unity.Netcode.NetworkManager.Singleton.IsHost)
+            if (networkObj != null && NetworkManager.Singleton != null && NetworkManager.Singleton.IsHost)
             {
                 networkObj.Spawn();
             }
