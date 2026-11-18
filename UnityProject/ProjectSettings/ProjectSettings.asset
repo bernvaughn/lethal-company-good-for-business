@@ -1,0 +1,172 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!129 &1
+ProjectSettings:
+  m_ObjectHideFlags: 0
+  serializableObjects: {}
+  serializationFormat: 2
+  scriptingBackend: 0
+  scriptingRuntimeVersion: 0
+  apiCompatibilityLevel: 2
+  activeScriptCompilationDefines:
+    - UNITY_2022_3_OR_NEWER
+  targetFramework: 2
+  enableScriptingDefineSymbols: 1
+  m_BuildTarget: 5
+  m_BuildTargetGroup: 1
+  m_ActiveColorSpace: 0
+  m_ActiveBuildTarget: StandaloneWindows64
+  m_DefaultScreenWidth: 1920
+  m_DefaultScreenHeight: 1080
+  m_DefaultScreenWidthWeb: 960
+  m_DefaultScreenHeightWeb: 600
+  m_StripEngineCode: 1
+  m_StripUnusedMeshComponents: 1
+  m_VirtualTexturingSupport: 0
+  m_RenderingPath: 1
+  m_MobileRenderingPath: 1
+  m_EnableFrameTimingStats: 0
+  m_BakeGlobalIllumination: 1
+  m_LightmapStreaming: 0
+  m_Enlighten: 0
+  m_EnableRealtimeReflectionProbes: 1
+  m_EnableBakedReflectionProbes: 1
+  m_EnableCustomRenderPipeline: 0
+  m_CustomRenderPipeline: {fileID: 0}
+  m_ScriptingDefineSymbols: UNITY_2022_3_OR_NEWER
+  m_ScriptingDefineSymbolsPerPlatform:
+    Standalone: UNITY_2022_3_OR_NEWER
+    WindowsStoreApps: UNITY_2022_3_OR_NEWER
+    WebGL: UNITY_2022_3_OR_NEWER
+    Android: UNITY_2022_3_OR_NEWER
+    iOS: UNITY_2022_3_OR_NEWER
+    tvOS: UNITY_2022_3_OR_NEWER
+    Switch: UNITY_2022_3_OR_NEWER
+    PS4: UNITY_2022_3_OR_NEWER
+    PS5: UNITY_2022_3_OR_NEWER
+    XboxOne: UNITY_2022_3_OR_NEWER
+    XboxSeries: UNITY_2022_3_OR_NEWER
+    GameCoreXboxSeries: UNITY_2022_3_OR_NEWER
+    GameCoreXboxOne: UNITY_2022_3_OR_NEWER
+    Linux: UNITY_2022_3_OR_NEWER
+    macOS: UNITY_2022_3_OR_NEWER
+    Lumin: UNITY_2022_3_OR_NEWER
+    Stadia: UNITY_2022_3_OR_NEWER
+    VisionOS: UNITY_2022_3_OR_NEWER
+  m_BatchMode: 0
+  m_ForceSingleInstance: 0
+  m_GPUDevice: 0
+  m_GPUDeviceName: 
+  m_DevicePadding: 0
+  m_ResizableWindow: 1
+  m_AllowFullscreenSwitch: 1
+  m_UsePlayerLog: 1
+  m_ShowUnitySplashScreen: 1
+  m_ShowUnitySplashLogo: 1
+  m_UnitySplashBackgroundColor: {r: 0.21960784, g: 0.21960784, b: 0.21960784, a: 1}
+  m_SplashScreenLogos: []
+  m_SplashScreenBackgroundAnimationZoom: 1
+  m_SplashScreenBackgroundAnimationTime: 1
+  m_SplashScreenBackgroundLandscapeAspect: 1.7777778
+  m_SplashScreenBackgroundPortraitAspect: 0.5625
+  m_SplashScreenBackgroundLandscapeUvs: {x: 0, y: 0, width: 1, height: 1}
+  m_SplashScreenBackgroundPortraitUvs: {x: 0, y: 0, width: 1, height: 1}
+  m_SplashScreenBackgroundLandscapeTexture: {fileID: 0}
+  m_SplashScreenBackgroundPortraitTexture: {fileID: 0}
+  m_SplashScreenOverlayOpacity: 1
+  m_SplashScreenLogoStyle: 0
+  m_SplashScreenAnimationZoom: 1
+  m_SplashScreenAnimationTime: 1
+  m_VulkanEnableSetSRGBWrite: 1
+  m_GraphicsAPIs: 
+  - 6
+  - 11
+  m_StackTraceLogTypeSettings:
+    None: 1
+    Error: 3
+    Assert: 3
+    Warning: 2
+    Log: 1
+    Exception: 3
+  m_AndroidShowActivityIndicatorOnLoad: 1
+  m_AndroidActivityIndicatorStyle: 0
+  m_AndroidBlitType: 0
+  m_AndroidResizeableActivity: 0
+  m_AndroidDefaultOrientation: 4
+  m_AndroidHideNavigationBar: 0
+  m_AndroidRenderOutsideSafeArea: 0
+  m_AndroidSupportedAspectRatioMode: 0
+  m_AndroidMaxAspectRatio: 2.1
+  m_AndroidMinAspectRatio: 1.3333334
+  m_AndroidEnableAutoRotation: 1
+  m_AndroidResizableWindow: 0
+  m_AndroidEnableProGuard: 0
+  m_AndroidProGuardFile: 
+  m_AndroidProGuardUserFile: 
+  m_AndroidEnableGradle: 1
+  m_AndroidGradleTemplate: 0
+  m_AndroidGradlePropertiesTemplate: 0
+  m_AndroidEnableR8: 1
+  m_AndroidR8ConfigFiles: []
+  m_AndroidMinifyDebug: 0
+  m_AndroidMinifyRelease: 1
+  m_AndroidBundleVersionCode: 1
+  m_AndroidVersionName: 1.0
+  m_AndroidBundleIdentifier: com.bernvaughn.GoodForBusiness
+  m_AndroidKeyAliasName: 
+  m_AndroidKeyAliasPass: 
+  m_AndroidKeyStorePass: 
+  m_AndroidKeyStorePath: 
+  m_AndroidTVCompatibility: 0
+  m_AndroidTargetArchitectures: 1
+  m_AndroidTargetSdkVersion: 33
+  m_AndroidMinSdkVersion: 23
+  m_AndroidAccelerometerFrequency: 60
+  m_AndroidGyroscopeFrequency: 60
+  m_AndroidEnableVulkan: 1
+  m_AndroidVulkanLoaders: []
+  m_AndroidEnableVRSupport: 0
+  m_AndroidVRLoader: 
+  m_AndroidVulkanFeatureLevel: 0
+  m_AndroidUseEmbeddedDex: 0
+  m_AndroidUseOBB: 0
+  m_AndroidOBBCompressionFormat: 0
+  m_AndroidOBBForceInstall: 0
+  m_AndroidEnableSplitApplicationBinary: 0
+  m_AndroidSplitApplicationBinaryDivision: 0
+  m_AndroidSplitApplicationBinaryMinSize: 0
+  m_AndroidUseAPKExpansionFiles: 0
+  m_AndroidEnableSwappy: 0
+  m_AndroidSwappySwapInterval: 1
+  m_AndroidSwappyFramePacingMode: 0
+  m_AndroidEnableGameSDK: 0
+  m_iOSTargetOSVersionString: 13.0
+  m_iOSTargetDevice: 3
+  m_iOSSdkVersion: 0
+  m_iOSTargetArchitectures: 1
+  m_iOSRequireARKit: 0
+  m_iOSRequireARKitFaceTracking: 0
+  m_iOSRequireARKitWorldTracking: 0
+  m_iOSURLSchemes: []
+  m_iOSBackgroundModes: 0
+  m_iOSAppGroups: []
+  m_iOSAssociatedDomains: []
+  m_iOSMetalAPIValidation: 0
+  m_iOSMetalEditorSupport: 0
+  m_iOSMetalForceHardwareRendering: 0
+  m_iOSUseIncrementalGC: 0
+  m_iOSAllowHTTPDownload: 1
+  m_iOSEnableOnDemandResources: 0
+  m_iOSOnDemandResourcesCategories: []
+  m_iOSLaunchScreenType: 0
+  m_iOSLaunchScreenPortrait: {fileID: 0}
+  m_iOSLaunchScreenLandscape: {fileID: 0}
+  m_iOSLaunchScreenBackgroundColor: {r: 0, g: 0, b: 0, a: 1}
+  m_iOSLaunchScreenFill: 0
+  m_iOSLaunchScreenImageScale: 0
+  m_iOSLaunchScreenLogo: {fileID: 0}
+  m_iOSLaunchScreenLogoSize: {x: 0, y: 0}
+  m_iOSLaunchScreenCustomStoryboardPath: 
+  m_iOSLaunchScreenCustomStoryboardType: 0
+  m_iOSLaunchScreenSupportsDarkMode: 0
+  m_iOSLaunchScreenSupportsLightMode: 1
