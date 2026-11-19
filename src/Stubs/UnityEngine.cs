@@ -210,17 +210,19 @@ namespace UnityEngine
         public Material(Shader shader) { }
         public Color color { get; set; } = Color.white;
         public void SetColor(string? propertyName, Color color) { }
+        public void SetColor(int propertyID, Color color) { }
         public void SetFloat(string? propertyName, float value) { }
+        public void SetFloat(int propertyID, float value) { }
         public Shader? shader { get; set; }
     }
 
     public class Shader : Object
     {
-        public static Shader? Find(string name) => null;
-        public static Shader? Find(string name, out Shader shader)
+        public static Shader Find(string name) => null!;
+        public static Shader Find(string name, out Shader shader)
         {
             shader = null!;
-            return null;
+            return null!;
         }
         public static int PropertyToID(string name) => name.GetHashCode();
     }
