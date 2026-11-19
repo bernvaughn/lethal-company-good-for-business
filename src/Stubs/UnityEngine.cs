@@ -223,7 +223,7 @@ namespace UnityEngine
     public class AssetBundle : Object
     {
         public static AssetBundle? LoadFromFile(string path) => null;
-        public static AssetBundle? LoadFromMemory(byte[] binary) => null.
+        public static AssetBundle? LoadFromMemory(byte[] binary) => null;
         public T? LoadAsset<T>(string name) where T : Object => default!;
         public T[] LoadAllAssets<T>() where T : Object => Array.Empty<T>();
         public void Unload(bool unloadAllLoadedObjects) { }
