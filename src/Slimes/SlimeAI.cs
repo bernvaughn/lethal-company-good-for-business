@@ -6,6 +6,7 @@ using GoodForBusiness.Stubs.Game;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
+using Unity.Netcode;
 
 namespace GoodForBusiness.Slimes
 {
@@ -20,7 +21,6 @@ namespace GoodForBusiness.Slimes
 
     public class SlimeAI : EnemyAI
     {
-        [Header("Slime Configuration")]
         public SlimeType SlimeType
         {
             get => (SlimeType)SyncSlimeType.Value;
@@ -42,11 +42,10 @@ namespace GoodForBusiness.Slimes
         [SerializeField] private SlimeHatchingSync? _hatchingSync;
         [SerializeField] private SlimeItemSpawnSync? _itemSpawnSync;
 
-        [Header("State")]
         public SlimeState CurrentState
         {
             get => (SlimeState)SyncState.Value;
-            private set => SyncState.Value = (int)value;
+            set => SyncState.Value = (int)value;
         }
 
         public float GrowthProgress
@@ -177,7 +176,7 @@ namespace GoodForBusiness.Slimes
                 _itemSpawnSync = gameObject.AddComponent<SlimeItemSpawnSync>();
         }
 
-        private void InitializeVariant()
+        public void InitializeVariant()
         {
             _config = GoodForBusinessPlugin.Instance?.Config;
 
@@ -204,7 +203,7 @@ namespace GoodForBusiness.Slimes
             }
         }
 
-        private IEnumerator StateMachineRoutine()
+        private System.Collections.IEnumerator StateMachineRoutine()
         {
             yield return new WaitForSeconds(1f);
 
@@ -256,7 +255,7 @@ namespace GoodForBusiness.Slimes
             }
         }
 
-        private IEnumerator BobRoutine()
+        private System.Collections.IEnumerator BobRoutine()
         {
             while (true)
             {
@@ -274,7 +273,7 @@ namespace GoodForBusiness.Slimes
 
             UpdateAnimations();
 
-            if (PluginConfig.Instance?.SlimesFacePlayers.Value == true)
+            if (GoodForBusinessPlugin.Instance?.Config?.SlimesFacePlayers.Value == true)
             {
                 FaceNearestPlayer();
             }
@@ -485,7 +484,7 @@ namespace GoodForBusiness.Slimes
             StartCoroutine(ReturnToIdleAfterAbility());
         }
 
-        private IEnumerator ReturnToIdleAfterAbility()
+        private System.Collections.IEnumerator ReturnToIdleAfterAbility()
         {
             yield return new WaitForSeconds(3f);
             if (IsServer)
@@ -494,7 +493,7 @@ namespace GoodForBusiness.Slimes
             }
         }
 
-        private void PlayEatEffects()
+        public void PlayEatEffects()
         {
             if (_eatClip != null)
             {
@@ -503,7 +502,7 @@ namespace GoodForBusiness.Slimes
             TriggerAnimationClientRpc("Eat");
         }
 
-        private void PlayGrowEffects()
+        public void PlayGrowEffects()
         {
             if (_growClip != null)
             {
@@ -512,7 +511,7 @@ namespace GoodForBusiness.Slimes
             TriggerAnimationClientRpc("Grow");
         }
 
-        private void PlayAbilityEffects()
+        public void PlayAbilityEffects()
         {
             if (_abilityClip != null)
             {
@@ -527,26 +526,26 @@ namespace GoodForBusiness.Slimes
         }
 
         [ServerRpc(RequireOwnership = false)]
-        private void SetStateServerRpc(SlimeState state)
+        public void SetStateServerRpc(SlimeState state)
         {
             CurrentState = state;
             _stateSync?.SyncStateClientRpc(NetworkObjectId, (int)state);
         }
 
         [ServerRpc(RequireOwnership = false)]
-        private void SyncGrowthServerRpc(float progress)
+        public void SyncGrowthServerRpc(float progress)
         {
             GrowthProgress = progress;
         }
 
         [ServerRpc(RequireOwnership = false)]
-        private void PlaySoundServerRpc(AudioSource source, AudioClip clip)
+        public void PlaySoundServerRpc(AudioSource source, AudioClip clip)
         {
             PlaySoundClientRpc(source, clip);
         }
 
         [ClientRpc]
-        private void PlaySoundClientRpc(AudioSource source, AudioClip clip)
+        public void PlaySoundClientRpc(AudioSource source, AudioClip clip)
         {
             if (source != null && clip != null)
             {
@@ -555,7 +554,7 @@ namespace GoodForBusiness.Slimes
         }
 
         [ClientRpc]
-        private void TriggerAnimationClientRpc(string trigger)
+        public void TriggerAnimationClientRpc(string trigger)
         {
             if (_animator != null)
             {

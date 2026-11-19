@@ -54,6 +54,8 @@
     <!-- <PackageReference Include="BepInEx.Core" Version="5.4.22" /> -->
     <!-- Netcode Patcher MSBuild integration -->
     <PackageReference Include="Evaisa.NetcodePatcher.MSBuild" Version="3.0.0" PrivateAssets="all" />
+    <!-- System.Text.Json for netstandard2.0 compatibility -->
+    <PackageReference Include="System.Text.Json" Version="8.0.4" />
   </ItemGroup>
 
   <ItemGroup>

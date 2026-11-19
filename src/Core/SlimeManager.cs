@@ -15,7 +15,7 @@ namespace GoodForBusiness.Core
 
         private readonly List<SlimeAI> _activeSlimes = new List<SlimeAI>();
         private SlimeSaveData[]? _pendingSaveData;
-        private readonly string _saveFilePath;
+        private string _saveFilePath = "";
 
         public IReadOnlyList<SlimeAI> ActiveSlimes => _activeSlimes;
 

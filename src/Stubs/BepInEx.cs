@@ -69,6 +69,8 @@ namespace BepInEx.Configuration
             => new ConfigEntry<T>(this, section, key, defaultValue, description);
         public ConfigEntry<T> Bind<T>(string section, string key, T defaultValue, ConfigDescription description)
             => new ConfigEntry<T>(this, section, key, defaultValue, description);
+        public ConfigEntry<T> Bind<T>(string section, string key, T defaultValue, ConfigDescription description, Action? settingChanged)
+            => new ConfigEntry<T>(this, section, key, defaultValue, description);
         public void Save() { }
         public void Reload() { }
     }
@@ -95,15 +97,24 @@ namespace BepInEx.Configuration
             Value = defaultValue;
             DefaultValue = defaultValue;
             Description = description.Description;
+            if (description.SettingChanged != null)
+            {
+                description.SettingChanged.DynamicInvoke();
+            }
         }
     }
 
     public class ConfigDescription
     {
         public string? Description { get; }
+        public Delegate? SettingChanged { get; }
         public ConfigDescription(string? description = null) { Description = description; }
         public ConfigDescription(string? description, AcceptableValueBase? acceptableValues) { Description = description; }
-        public ConfigDescription(string? description, AcceptableValueBase? acceptableValues, Action? settingChanged) { Description = description; }
+        public ConfigDescription(string? description, AcceptableValueBase? acceptableValues, Delegate? settingChanged) 
+        { 
+            Description = description; 
+            SettingChanged = settingChanged;
+        }
     }
 
     public abstract class AcceptableValueBase { }

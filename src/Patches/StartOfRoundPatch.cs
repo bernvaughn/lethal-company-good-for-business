@@ -6,6 +6,7 @@ using GoodForBusiness.Slimes;
 using GoodForBusiness.Networking;
 using LethalLib.Modules;
 using UnityEngine;
+using Unity.Netcode;
 
 namespace GoodForBusiness.Patches
 {
@@ -74,7 +75,7 @@ namespace GoodForBusiness.Patches
             eggItem.StartHatching();
 
             // Use the network sync component to hatch the egg properly
-            var hatchingSync = FindObjectOfType<SlimeHatchingSync>();
+            var hatchingSync = UnityEngine.Object.FindObjectOfType<SlimeHatchingSync>();
             if (hatchingSync != null)
             {
                 hatchingSync.HatchEggServerRpc(eggItem.transform.position, (int)eggItem.EggType, ownerPlayerId);

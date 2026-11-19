@@ -31,7 +31,7 @@ namespace GoodForBusiness.Items
             scanNodeProperties.subText = "A beehive coated in slime. The Company pays a high price for it.";
         }
 
-        public override void OnNetworkSpawn()
+        protected override void OnNetworkSpawn()
         {
             base.OnNetworkSpawn();
 

@@ -2,8 +2,10 @@ using GoodForBusiness.Core;
 using GoodForBusiness.Egg;
 using GoodForBusiness.Slimes;
 using GoodForBusiness.Stubs.Game;
+using LethalLib.Modules;
 using UnityEngine;
 using Unity.Netcode;
+using UnityEngine.AI;
 
 namespace GoodForBusiness.Networking
 {
@@ -61,7 +63,7 @@ namespace GoodForBusiness.Networking
     {
         private NetworkTransform? _networkTransform;
 
-        public override void Awake()
+        protected override void Awake()
         {
             base.Awake();
             _networkTransform = GetComponent<NetworkTransform>();
@@ -80,7 +82,7 @@ namespace GoodForBusiness.Networking
             _networkTransform.Interpolate = true;
             _networkTransform.TeleportThreshold = 5f;
             _networkTransform.SynchronizeRotation = true;
-            _networkTransform.ScaleSynchronization = NetworkTransform.ScaleSynchronizationMode.None;
+            _networkTransform.ScaleSynchronization = ScaleSynchronizationMode.None;
         }
 
         /// <summary>

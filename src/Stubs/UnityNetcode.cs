@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 namespace Unity.Netcode
 {
@@ -24,6 +25,8 @@ namespace Unity.Netcode
         public bool IsSpawned => true;
         public bool IsSceneObject => false;
         public NetworkBehaviour[] NetworkBehaviours => Array.Empty<NetworkBehaviour>();
+        public void Spawn() { }
+        public void Despawn() { }
     }
 
     public class NetworkVariable<T> where T : struct
@@ -31,7 +34,7 @@ namespace Unity.Netcode
         public NetworkVariable() { }
         public NetworkVariable(T value) { Value = value; }
         public T Value { get; set; }
-        public event Action<T, T> OnValueChanged;
+        public event Action<T, T>? OnValueChanged;
         public void Set(T value) { Value = value; }
         public bool IsDirty => false;
         public static implicit operator T(NetworkVariable<T> variable) => variable.Value;
@@ -41,7 +44,7 @@ namespace Unity.Netcode
     {
         public int Count => 0;
         public T this[int index] { get => default; set { } }
-        public event Action<NetworkListEvent<T>> OnListChanged;
+        public event Action<NetworkListEvent<T>>? OnListChanged;
         public void Add(T value) { }
         public void RemoveAt(int index) { }
         public void Clear() { }
@@ -93,12 +96,12 @@ namespace Unity.Netcode
 
     public class ClientRpcParams
     {
-        public RpcTarget Send { get; set; }
+        public RpcTarget Send { get; set; } = RpcTarget.All;
     }
 
     public class ServerRpcParams
     {
-        public ServerRpcReceiveParams Receive { get; set; }
+        public ServerRpcReceiveParams Receive { get; set; } = new ServerRpcReceiveParams();
     }
 
     public class ServerRpcReceiveParams
@@ -106,19 +109,25 @@ namespace Unity.Netcode
         public ulong SenderClientId => 0;
     }
 
-    public static class NetworkManager
+    public class NetworkManager : UnityEngine.MonoBehaviour
     {
-        public static NetworkManager Singleton => new NetworkManager();
+        public static NetworkManager? Singleton { get; private set; } = new NetworkManager();
         public bool IsServer => true;
         public bool IsClient => true;
         public bool IsHost => true;
         public bool IsListening => true;
         public ulong LocalClientId => 0;
         public NetworkConfig NetworkConfig => new NetworkConfig();
+        public SpawnManager SpawnManager => new SpawnManager();
         public void Shutdown() { }
         public void StartHost() { }
         public void StartClient() { }
         public void StartServer() { }
+    }
+
+    public class SpawnManager
+    {
+        public NetworkObject? GetNetworkObject(ulong networkObjectId) => null;
     }
 
     public class NetworkConfig
@@ -126,11 +135,27 @@ namespace Unity.Netcode
         public string NetworkTransport = "UnityTransport";
     }
 
+    public enum ScaleSynchronizationMode
+    {
+        None,
+        Enabled
+    }
+
     public class NetworkTransform : NetworkBehaviour
     {
         public bool Interpolate { get; set; } = true;
         public float InterpolationTime { get; set; } = 0.1f;
         public bool ServerAuthoritative { get; set; } = true;
+        public bool SynchronizeRotation { get; set; } = true;
+        public ScaleSynchronizationMode ScaleSynchronization { get; set; } = ScaleSynchronizationMode.None;
+        public float TeleportThreshold { get; set; } = 5f;
+        public void Teleport(Vector3 position, Quaternion rotation) { }
+    }
+
+    public static class NetworkPrefabs
+    {
+        public static UnityEngine.GameObject? GetPrefab(string name) => null;
+        public static void RegisterNetworkPrefab(UnityEngine.GameObject prefab) { }
     }
 }
 

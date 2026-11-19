@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace GoodForBusiness.Patches
 {
-    [HarmonyPatch(typeof(PlayerControllerB), nameof(PlayerControllerB.Update))]
+    [HarmonyPatch(typeof(PlayerControllerB), "Update")]
     public class PlayerControllerBPatch
     {
         private static float _lastFeedAttempt = 0f;

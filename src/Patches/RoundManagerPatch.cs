@@ -2,6 +2,7 @@ using HarmonyLib;
 using GoodForBusiness.Stubs.Game;
 using GoodForBusiness.Core;
 using GoodForBusiness.Egg;
+using Unity.Netcode;
 
 namespace GoodForBusiness.Patches
 {

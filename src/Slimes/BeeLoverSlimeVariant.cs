@@ -60,7 +60,7 @@ namespace GoodForBusiness.Slimes
         /// with teleport fallback if pathfinding fails, then spawn
         /// a Slimed Beehive at the hive location.
         /// </summary>
-        private IEnumerator HuntBeehiveRoutine(SlimeAI slime)
+        private System.Collections.IEnumerator HuntBeehiveRoutine(SlimeAI slime)
         {
             var detectionRange = _config.BeeDetectionRange.Value;
             var attackRange = _config.BeeLoverSlimeAttackRange.Value;
