@@ -21,7 +21,6 @@ namespace GoodForBusiness.Slimes
 
     public class SlimeAI : EnemyAI
     {
-        [Header("Slime Configuration")]
         public SlimeType SlimeType
         {
             get => (SlimeType)SyncSlimeType.Value;
@@ -43,7 +42,6 @@ namespace GoodForBusiness.Slimes
         [SerializeField] private SlimeHatchingSync? _hatchingSync;
         [SerializeField] private SlimeItemSpawnSync? _itemSpawnSync;
 
-        [Header("State")]
         public SlimeState CurrentState
         {
             get => (SlimeState)SyncState.Value;
@@ -205,7 +203,7 @@ namespace GoodForBusiness.Slimes
             }
         }
 
-        private IEnumerator StateMachineRoutine()
+        private System.Collections.IEnumerator StateMachineRoutine()
         {
             yield return new WaitForSeconds(1f);
 
@@ -257,7 +255,7 @@ namespace GoodForBusiness.Slimes
             }
         }
 
-        private IEnumerator BobRoutine()
+        private System.Collections.IEnumerator BobRoutine()
         {
             while (true)
             {
@@ -486,7 +484,7 @@ namespace GoodForBusiness.Slimes
             StartCoroutine(ReturnToIdleAfterAbility());
         }
 
-        private IEnumerator ReturnToIdleAfterAbility()
+        private System.Collections.IEnumerator ReturnToIdleAfterAbility()
         {
             yield return new WaitForSeconds(3f);
             if (IsServer)
@@ -576,7 +574,7 @@ namespace GoodForBusiness.Slimes
             _itemSpawnSync?.SpawnItemServerRpc(itemName, position, Quaternion.identity, creditValue);
         }
 
-        public override void OnDestroy()
+        protected override void OnDestroy()
         {
             base.OnDestroy();
             if (_stateCoroutine != null)

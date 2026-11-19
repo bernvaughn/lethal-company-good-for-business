@@ -55,7 +55,7 @@ namespace GoodForBusiness.Items
             itemValue = CreditValue;
         }
 
-        public override void OnNetworkSpawn()
+        protected override void OnNetworkSpawn()
         {
             base.OnNetworkSpawn();
 

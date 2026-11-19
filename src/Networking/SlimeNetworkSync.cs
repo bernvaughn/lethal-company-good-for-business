@@ -62,7 +62,7 @@ namespace GoodForBusiness.Networking
     {
         private NetworkTransform? _networkTransform;
 
-        public override void Awake()
+        protected override void Awake()
         {
             base.Awake();
             _networkTransform = GetComponent<NetworkTransform>();
