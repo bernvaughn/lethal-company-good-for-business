@@ -14,7 +14,6 @@ namespace UnityEngine
         public T AddComponent<T>() where T : Component => default!;
         public static void Destroy(Object? obj) { }
         public static void Destroy(Object? obj, float t) { }
-        public static Object? FindObjectOfType<T>() where T : Object => null;
         public static T FindObjectOfType<T>() where T : Object => default!;
         public static T[] FindObjectsOfType<T>() where T : Object => Array.Empty<T>();
         public static T[] FindObjectsByType<T>(FindObjectsInactive findObjectsInactive, FindObjectsSortMode sortMode) where T : Object => Array.Empty<T>();
