@@ -4,6 +4,7 @@ using GoodForBusiness.Slimes;
 using GoodForBusiness.Stubs.Game;
 using UnityEngine;
 using Unity.Netcode;
+using UnityEngine.AI;
 
 namespace GoodForBusiness.Networking
 {

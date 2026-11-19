@@ -6,6 +6,7 @@ using GoodForBusiness.Stubs.Game;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
+using Unity.Netcode;
 
 namespace GoodForBusiness.Slimes
 {

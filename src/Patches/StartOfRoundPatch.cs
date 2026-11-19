@@ -6,6 +6,7 @@ using GoodForBusiness.Slimes;
 using GoodForBusiness.Networking;
 using LethalLib.Modules;
 using UnityEngine;
+using Unity.Netcode;
 
 namespace GoodForBusiness.Patches
 {
