@@ -1,0 +1,10 @@
+[package]
+name = "GoodForBusiness"
+version = "1.0.0"
+description = "Adds slime eggs that hatch into helpful slimes with unique abilities"
+authors = ["bernvaughn"]
+homepage = "https://github.com/bernvaughn/lethal-company-good-for-business"
+
+[dependencies]
+BepInEx-BepInExPack = "5.4.2100"
+Evaisa-LethalLib = "0.15.0"
