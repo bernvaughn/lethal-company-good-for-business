@@ -8,7 +8,6 @@
     <LangVersion>latest</LangVersion>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
-    <RestoreDisabled>true</RestoreDisabled>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
     <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
     <GenerateAssemblyDescriptionAttribute>false</GenerateAssemblyDescriptionAttribute>
@@ -68,12 +67,6 @@
     <None Include="README.md" CopyToOutputDirectory="PreserveNewest" />
     <None Include="icon.png" CopyToOutputDirectory="PreserveNewest" Condition="Exists('icon.png')" />
   </ItemGroup>
-
-  <!-- Skip NuGet package resolution since we use local stubs only -->
-  <Target Name="ResolvePackageAssets" />
-  <Target Name="ResolvePackageDependencies" />
-  <Target Name="ResolveNuGetPackageAssets" />
-  <Target Name="Restore" />
 
   <!-- Thunderstore packaging target -->
   <Target Name="ThunderstorePackage" AfterTargets="Build" Condition="'$(Configuration)' == 'Release'">

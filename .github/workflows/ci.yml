@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# Stop the older run when a newer commit lands on the same branch or pull request.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: build
+    runs-on: ubuntu-latest
+    # A hung `dotnet build` has been seen on this project. Cap it so a hang costs minutes, not hours.
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore
+        timeout-minutes: 5
+        run: dotnet restore GoodForBusiness.csproj
+
+      # The two flags stop MSBuild and the compiler from leaving background servers running.
+      - name: Build the mod (Debug)
+        timeout-minutes: 10
+        run: dotnet build GoodForBusiness.csproj --configuration Debug --no-restore -nodeReuse:false -p:UseSharedCompilation=false
+
+      # The tests are plain methods with no test framework yet, so `dotnet test` would find nothing.
+      # Building the project at least proves that the test code compiles.
+      - name: Build the test project
+        timeout-minutes: 10
+        run: dotnet build Tests/GoodForBusiness.Tests.csproj --configuration Debug -nodeReuse:false -p:UseSharedCompilation=false
