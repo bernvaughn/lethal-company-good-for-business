@@ -1,0 +1,63 @@
+# PROPOSED, NOT ACTIVE. Move to .github/workflows/release.yml once these are fixed:
+#  1. thunderstore.toml is not in the format `tcli` needs. It needs a `[config]` table with
+#     `schemaVersion`, and `[package]` needs `namespace` and `versionNumber`, `websiteUrl`
+#     and `containsNsfwContent`. Dependencies go in `[package.dependencies]`.
+#  2. GoodForBusiness.csproj runs `tcli build` inside every Release build (the ThunderstorePackage
+#     target), so a Release build fails until (1) is fixed. Remove that target and let this
+#     workflow run `tcli build` once.
+# Fixed here: the release trigger never fired (the old file only listened to branches, and the
+# release job needed a package job that only ran on main), and `*.zip` missed tcli's build/ folder.
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Build Release
+        run: dotnet build GoodForBusiness.csproj --configuration Release --no-restore -nodeReuse:false -p:UseSharedCompilation=false
+
+      - name: Install tcli
+        run: dotnet tool install --global tcli
+
+      - name: Build Thunderstore package
+        run: tcli build
+
+      - name: Upload package artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: goodforbusiness-package
+          path: build/*.zip
+
+  release:
+    needs: package
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: goodforbusiness-package
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: "*.zip"
+          generate_release_notes: true
