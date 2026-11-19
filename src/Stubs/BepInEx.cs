@@ -97,17 +97,20 @@ namespace BepInEx.Configuration
             Value = defaultValue;
             DefaultValue = defaultValue;
             Description = description.Description;
-            description.SettingChanged?.Invoke();
+            if (description.SettingChanged != null)
+            {
+                description.SettingChanged.DynamicInvoke();
+            }
         }
     }
 
     public class ConfigDescription
     {
         public string? Description { get; }
-        public Action? SettingChanged { get; }
+        public Delegate? SettingChanged { get; }
         public ConfigDescription(string? description = null) { Description = description; }
         public ConfigDescription(string? description, AcceptableValueBase? acceptableValues) { Description = description; }
-        public ConfigDescription(string? description, AcceptableValueBase? acceptableValues, Action? settingChanged) 
+        public ConfigDescription(string? description, AcceptableValueBase? acceptableValues, Delegate? settingChanged) 
         { 
             Description = description; 
             SettingChanged = settingChanged;
