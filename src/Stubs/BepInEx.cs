@@ -67,7 +67,11 @@ namespace BepInEx.Configuration
         public ConfigFile(string? configPath, bool saveOnDisk) { }
         public ConfigEntry<T> Bind<T>(string section, string key, T defaultValue, string? description = null)
             => new ConfigEntry<T>(this, section, key, defaultValue, description);
+        public ConfigEntry<T> Bind<T>(string section, string key, T defaultValue, string? description, Action? settingChanged)
+            => new ConfigEntry<T>(this, section, key, defaultValue, description);
         public ConfigEntry<T> Bind<T>(string section, string key, T defaultValue, ConfigDescription description)
+            => new ConfigEntry<T>(this, section, key, defaultValue, description);
+        public ConfigEntry<T> Bind<T>(string section, string key, T defaultValue, ConfigDescription description, Action? settingChanged)
             => new ConfigEntry<T>(this, section, key, defaultValue, description);
         public void Save() { }
         public void Reload() { }
@@ -101,9 +105,14 @@ namespace BepInEx.Configuration
     public class ConfigDescription
     {
         public string? Description { get; }
+        public Action? SettingChanged { get; }
         public ConfigDescription(string? description = null) { Description = description; }
         public ConfigDescription(string? description, AcceptableValueBase? acceptableValues) { Description = description; }
-        public ConfigDescription(string? description, AcceptableValueBase? acceptableValues, Action? settingChanged) { Description = description; }
+        public ConfigDescription(string? description, AcceptableValueBase? acceptableValues, Action? settingChanged) 
+        { 
+            Description = description; 
+            SettingChanged = settingChanged;
+        }
     }
 
     public abstract class AcceptableValueBase { }

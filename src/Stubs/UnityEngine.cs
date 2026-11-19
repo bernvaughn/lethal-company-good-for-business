@@ -15,6 +15,7 @@ namespace UnityEngine
         public static void Destroy(Object? obj) { }
         public static void Destroy(Object? obj, float t) { }
         public static Object? FindObjectOfType<T>() where T : Object => null;
+        public static T FindObjectOfType<T>() where T : Object => default!;
         public static T[] FindObjectsOfType<T>() where T : Object => Array.Empty<T>();
         public static T[] FindObjectsByType<T>(FindObjectsInactive findObjectsInactive, FindObjectsSortMode sortMode) where T : Object => Array.Empty<T>();
         public static void DontDestroyOnLoad(Object? obj) { }
@@ -47,6 +48,7 @@ namespace UnityEngine
         public static float Clamp01(float value) => value < 0 ? 0 : (value > 1 ? 1 : value);
         public static float Max(float a, float b) => a > b ? a : b;
         public static float Min(float a, float b) => a < b ? a : b;
+        public static float Sin(float f) => (float)System.Math.Sin(f);
     }
 
     public static class Random
@@ -72,6 +74,8 @@ namespace UnityEngine
         public T[] GetComponentsInChildren<T>() where T : Component => Array.Empty<T>();
         public T[] GetComponentsInChildren<T>(bool includeInactive) where T : Component => Array.Empty<T>();
         public T[] GetComponents<T>() where T : Component => Array.Empty<T>();
+        public T GetComponentInParent<T>() where T : Component => default!;
+        public T GetComponentInParent<T>(bool includeInactive) where T : Component => default!;
     }
 
     public class Behaviour : Component
@@ -84,7 +88,7 @@ namespace UnityEngine
     {
         public Material material => default!;
         public Material[] materials { get; set; } = Array.Empty<Material>();
-        public Material sharedMaterial => default!;
+        public Material sharedMaterial { get; set; } = default!;
         public void GetPropertyBlock(MaterialPropertyBlock properties) { }
         public void SetPropertyBlock(MaterialPropertyBlock properties) { }
     }
@@ -92,9 +96,13 @@ namespace UnityEngine
     public class MaterialPropertyBlock
     {
         public void SetColor(string? propertyName, Color color) { }
+        public void SetColor(int propertyID, Color color) { }
         public void SetFloat(string? propertyName, float value) { }
+        public void SetFloat(int propertyID, float value) { }
         public void GetColor(string? propertyName, out Color color) => color = default;
+        public void GetColor(int propertyID, out Color color) => color = default;
         public void GetFloat(string? propertyName, out float value) => value = default;
+        public void GetFloat(int propertyID, out float value) => value = default;
     }
 
     public class GameObject : Object
@@ -147,10 +155,12 @@ namespace UnityEngine
         public static bool operator ==(Vector3 a, Vector3 b) => a.x == b.x && a.y == b.y && a.z == b.z;
         public static bool operator !=(Vector3 a, Vector3 b) => a.x != b.x || a.y != b.y || a.z != b.z;
         public float magnitude => (float)System.Math.Sqrt(x * x + y * y + z * z);
+        public float sqrMagnitude => x * x + y * y + z * z;
+        public static float SqrMagnitude(Vector3 a) => a.x * a.x + a.y * a.y + a.z * a.z;
         public Vector3 normalized => magnitude > 0 ? this / magnitude : zero;
         public override string ToString() => $"({x}, {y}, {z})";
         public override bool Equals(object? other) => other is Vector3 v && this == v;
-        public override int GetHashCode() => HashCode.Combine(x, y, z);
+        public override int GetHashCode() => x.GetHashCode() ^ y.GetHashCode() ^ z.GetHashCode();
     }
 
     public struct Quaternion
@@ -162,6 +172,7 @@ namespace UnityEngine
         public static Vector3 operator *(Quaternion rotation, Vector3 point) => point;
         public static Quaternion LookRotation(Vector3 forward) => identity;
         public static Quaternion LookRotation(Vector3 forward, Vector3 upwards) => identity;
+        public static Quaternion Slerp(Quaternion a, Quaternion b, float t) => a;
         public override string ToString() => $"({x}, {y}, {z}, {w})";
     }
 
@@ -211,6 +222,7 @@ namespace UnityEngine
             shader = null!;
             return null;
         }
+        public static int PropertyToID(string name) => name.GetHashCode();
     }
 
     public class Sprite : Object { }
@@ -285,18 +297,18 @@ namespace UnityEngine
         protected virtual void OnDestroy() { }
         protected virtual void OnEnable() { }
         protected virtual void OnDisable() { }
-        public Coroutine? StartCoroutine(IEnumerator routine) => null;
+        public Coroutine? StartCoroutine(System.Collections.IEnumerator routine) => null;
         public Coroutine? StartCoroutine(string methodName) => null;
         public Coroutine? StartCoroutine(string methodName, object value) => null;
         public void StopCoroutine(Coroutine? routine) { }
-        public void StopCoroutine(IEnumerator routine) { }
+        public void StopCoroutine(System.Collections.IEnumerator routine) { }
         public void StopCoroutine(string methodName) { }
         public void StopAllCoroutines() { }
     }
 
     public class Coroutine : Object { }
 
-    public struct WaitForSeconds : IEnumerator
+    public struct WaitForSeconds : System.Collections.IEnumerator
     {
         public float waitTime;
         public WaitForSeconds(float seconds) { waitTime = seconds; }

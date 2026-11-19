@@ -74,6 +74,7 @@ namespace GoodForBusiness.Stubs.Game
         public static PlayerControllerB[]? allPlayerScripts;
         public int playerClientId;
         public bool isPlayerDead;
+        public bool IsOwner => true;
         public GrabbableObject?[] ItemSlots = new GrabbableObject?[4];
         public int currentItemSlot = 0;
         public Vector3 transformPosition => transform.position;
@@ -104,5 +105,6 @@ namespace GoodForBusiness.Stubs.Game
         public GameObject enemyPrefab;
         public int PowerLevel;
         public int spawnWeight;
+        public string enemyName = "";
     }
 }

@@ -2,6 +2,7 @@ using GoodForBusiness.Core;
 using GoodForBusiness.Egg;
 using GoodForBusiness.Slimes;
 using GoodForBusiness.Stubs.Game;
+using LethalLib.Modules;
 using UnityEngine;
 using Unity.Netcode;
 using UnityEngine.AI;
