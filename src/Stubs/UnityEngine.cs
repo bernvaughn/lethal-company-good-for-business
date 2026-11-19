@@ -296,7 +296,7 @@ namespace UnityEngine
         protected virtual void Start() { }
         protected virtual void Update() { }
         protected virtual void FixedUpdate() { }
-        protected virtual void OnDestroy() { }
+        public virtual void OnDestroy() { }
         protected virtual void OnEnable() { }
         protected virtual void OnDisable() { }
         public Coroutine? StartCoroutine(System.Collections.IEnumerator routine) => null;

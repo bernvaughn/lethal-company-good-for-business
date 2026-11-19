@@ -214,7 +214,7 @@ namespace GoodForBusiness.Tests
 
             var data = new[]
             {
-                new SlimeSaveData(SlimeType.Equipment, new Vector3(1, 2, 3), 0.5f, false, 0, 0)
+                new SlimeSaveData(SlimeType.Equipment, new Vector3(1, 2, 3), 0.5f, false, 0)
             };
 
             manager.LoadSaveData(data);
