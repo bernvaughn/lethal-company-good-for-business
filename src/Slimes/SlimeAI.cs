@@ -574,7 +574,7 @@ namespace GoodForBusiness.Slimes
             _itemSpawnSync?.SpawnItemServerRpc(itemName, position, Quaternion.identity, creditValue);
         }
 
-        protected override void OnDestroy()
+        public override void OnDestroy()
         {
             base.OnDestroy();
             if (_stateCoroutine != null)
