@@ -28,7 +28,10 @@ jobs:
         with:
           dotnet-version: 8.0.x
 
-      # The mod project skips NuGet restore on purpose (it builds against local stubs), so --no-restore.
+      - name: Restore
+        timeout-minutes: 5
+        run: dotnet restore GoodForBusiness.csproj
+
       # The two flags stop MSBuild and the compiler from leaving background servers running.
       - name: Build the mod (Debug)
         timeout-minutes: 10
