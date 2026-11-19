@@ -82,7 +82,7 @@ namespace GoodForBusiness.Networking
             _networkTransform.Interpolate = true;
             _networkTransform.TeleportThreshold = 5f;
             _networkTransform.SynchronizeRotation = true;
-            _networkTransform.ScaleSynchronization = NetworkTransform.ScaleSynchronizationMode.None;
+            _networkTransform.ScaleSynchronization = ScaleSynchronizationMode.None;
         }
 
         /// <summary>

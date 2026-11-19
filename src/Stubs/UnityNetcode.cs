@@ -150,7 +150,6 @@ namespace Unity.Netcode
         public ScaleSynchronizationMode ScaleSynchronization { get; set; } = ScaleSynchronizationMode.None;
         public float TeleportThreshold { get; set; } = 5f;
         public void Teleport(Vector3 position, Quaternion rotation) { }
-        public ScaleSynchronizationMode ScaleSynchronizationMode => ScaleSynchronization;
     }
 
     public static class NetworkPrefabs

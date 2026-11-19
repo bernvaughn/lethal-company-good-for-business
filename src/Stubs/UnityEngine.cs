@@ -207,6 +207,7 @@ namespace UnityEngine
     {
         public Material() { }
         public Material(Material? source) { }
+        public Material(Shader shader) { }
         public Color color { get; set; } = Color.white;
         public void SetColor(string? propertyName, Color color) { }
         public void SetFloat(string? propertyName, float value) { }

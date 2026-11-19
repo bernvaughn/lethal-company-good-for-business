@@ -45,7 +45,7 @@ namespace GoodForBusiness.Slimes
         public SlimeState CurrentState
         {
             get => (SlimeState)SyncState.Value;
-            private set => SyncState.Value = (int)value;
+            set => SyncState.Value = (int)value;
         }
 
         public float GrowthProgress
