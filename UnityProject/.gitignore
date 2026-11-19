@@ -57,7 +57,7 @@ crashlytics-build.properties
 *.code-workspace
 
 # UnityPackageManager
-Packages/
+Packages/*
 !Packages/manifest.json
 !Packages/packages-lock.json
 

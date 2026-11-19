@@ -63,7 +63,7 @@ UnityProject/*.unityproj
 UnityProject/.idea/
 UnityProject/.vscode/
 UnityProject/*.code-workspace
-UnityProject/Packages/
+UnityProject/Packages/*
 !UnityProject/Packages/manifest.json
 !UnityProject/Packages/packages-lock.json
 UnityProject/.DS_Store
